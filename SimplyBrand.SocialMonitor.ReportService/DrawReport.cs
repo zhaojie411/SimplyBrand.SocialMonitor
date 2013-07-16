@@ -409,7 +409,6 @@ namespace SimplyBrand.SocialMonitor.ReportService
             float clength = (maxlength - 300) / 8;
             tableData.SetWidths(new float[] { clength, clength, clength, 300, clength, clength, clength, clength, clength });
             //tableData.WriteSelectedRows(0, -1, 20, document.PageSize.Height - 30, writer.DirectContent);
-
             document.Add(tableData);
         }
         private void DrawCompanyInfo(Document document, PdfWriter writer)

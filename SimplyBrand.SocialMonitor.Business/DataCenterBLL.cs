@@ -8,6 +8,7 @@ using SimplyBrand.SocialMonitor.DAL.Data.Bases;
 using SimplyBrand.SocialMonitor.DAL.Entities;
 using SimplyBrand.SocialMonitor.Business.JsonEntity;
 using SimplyBrand.SocialMonitor.Business.Utility;
+using System.Data.SqlTypes;
 namespace SimplyBrand.SocialMonitor.Business
 {
 
@@ -27,7 +28,7 @@ namespace SimplyBrand.SocialMonitor.Business
             response.issucc = true;
             try
             {
-               
+
                 TList<KeywordFamily> tlist = DataRepository.KeywordFamilyProvider.GetBySysUserId(sysUserId);
                 if (string.IsNullOrEmpty(keywordFamilyIDs))
                 {
@@ -41,9 +42,21 @@ namespace SimplyBrand.SocialMonitor.Business
                 {
                     emotionvalues = (int)EnumEmotionalValue.Positive + "," + (int)EnumEmotionalValue.Negative + "," + (int)EnumEmotionalValue.Neutral;
                 }
+                DateTime starttime = DateTime.Now;
+                DateTime endtime = DateTime.Now;
+                if (isToday)
+                {
+                    starttime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd"));
+                    endtime = DateTime.Now.AddDays(1);
+                }
+                else
+                {
+                    starttime = DateTime.Parse(SqlDateTime.MinValue.ToString());
+                    endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
 
+                }
                 //可以加校验 
-                Dictionary<string, List<DataCenterSummaryItemJson>> dic = GetSummaryData(keywordFamilyIDs, platforms, emotionvalues, isToday);
+                Dictionary<string, List<DataCenterSummaryItemJson>> dic = GetSummaryData(keywordFamilyIDs, platforms, emotionvalues, isToday, starttime.ToString(), endtime.ToString());
 
                 response.data = new DataCenterSummaryJson();
                 response.data.items = dic;
@@ -73,8 +86,20 @@ namespace SimplyBrand.SocialMonitor.Business
                 {
                     platforms = (int)EnumPlatform.Weibo + "," + (int)EnumPlatform.News + "," + (int)EnumPlatform.Blog + "," + (int)EnumPlatform.BBS;
                 }
+                DateTime starttime = DateTime.Now;
+                DateTime endtime = DateTime.Now;
+                if (isToday)
+                {
+                    starttime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd"));
+                    endtime = DateTime.Now.AddDays(1);
+                }
+                else
+                {
+                    starttime = DateTime.Parse(SqlDateTime.MinValue.ToString());
+                    endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
 
-                List<DataCenterSummaryItemJson> list = GetEmotionalData(keywordFamilyIDs, platforms, isToday);
+                }
+                List<DataCenterSummaryItemJson> list = GetEmotionalData(keywordFamilyIDs, platforms, starttime.ToString(), endtime.ToString());
                 response.data = list;
 
             }
@@ -108,10 +133,11 @@ namespace SimplyBrand.SocialMonitor.Business
             return value;
         }
 
-        public List<DataCenterSummaryItemJson> GetEmotionalData(string keywordFamilyIDs, string platforms, bool isToday)
+        public List<DataCenterSummaryItemJson> GetEmotionalData(string keywordFamilyIDs, string platforms, string starttime, string endtime)
         {
-            TList<DataCenter> tlist = FindDataCenter(keywordFamilyIDs, platforms, isToday);
-            var query = from t in tlist
+            //TList<DataCenter> tlist = FindDataCenter(keywordFamilyIDs, platforms, isToday, emotionvalues);
+            VList<ViewDataCenter> vlist = FindViewDataCenter(keywordFamilyIDs, platforms, starttime, endtime, string.Empty);
+            var query = from t in vlist
                         group t by (int)t.Emotionalvalue
                             into g
                             select new
@@ -132,10 +158,10 @@ namespace SimplyBrand.SocialMonitor.Business
 
 
 
-        public Dictionary<string, List<DataCenterSummaryItemJson>> GetSummaryData(string keywordFamilyIDs, string platforms, string emotionvalues, bool isToday)
+        public Dictionary<string, List<DataCenterSummaryItemJson>> GetSummaryData(string keywordFamilyIDs, string platforms, string emotionvalues, bool isToday, string starttime, string endtime)
         {
             //TList<DataCenter> tlist = FindDataCenter(keywordFamilyIDs, platforms, isToday, emotionvalues);
-            VList<ViewDataCenter> vlist = FindViewDataCenter(keywordFamilyIDs, platforms, isToday, emotionvalues);
+            VList<ViewDataCenter> vlist = FindViewDataCenter(keywordFamilyIDs, platforms, starttime, endtime, emotionvalues);
 
             if (isToday)
             {
@@ -235,6 +261,33 @@ namespace SimplyBrand.SocialMonitor.Business
                 return dicNew;
 
             }
+        }
+
+
+        public VList<ViewDataCenter> FindViewDataCenter(string keywordFamilyIDs, string platforms, string starttime, string endtime, string emotionvalues)
+        {
+            if (string.IsNullOrEmpty(keywordFamilyIDs))
+            {
+                return new VList<ViewDataCenter>();
+            }
+            ViewDataCenterParameterBuilder builder = new ViewDataCenterParameterBuilder();
+            builder.Clear();
+            builder.Junction = SqlUtil.AND;
+            builder.AppendIn(ViewDataCenterColumn.KeywordFamilyId, keywordFamilyIDs.Split(','));
+            builder.AppendIn(ViewDataCenterColumn.Datasourceid, platforms.Split(','));
+            if (!string.IsNullOrEmpty(starttime))
+            {
+                builder.AppendGreaterThanOrEqual(ViewDataCenterColumn.Datatime, starttime);
+            }
+            if (!string.IsNullOrEmpty(endtime))
+            {
+                builder.AppendLessThanOrEqual(ViewDataCenterColumn.Datatime, endtime);
+            }
+            if (!string.IsNullOrEmpty(emotionvalues))
+            {
+                builder.AppendIn(ViewDataCenterColumn.Emotionalvalue, emotionvalues.Split(','));
+            }
+            return DataRepository.ViewDataCenterProvider.Find(builder.GetParameters());
         }
 
         public VList<ViewDataCenter> FindViewDataCenter(string keywordFamilyIDs, string platforms, bool isToday, string emotionvalues = null)

@@ -19,7 +19,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
             //Console.Read();
             DrawReport dr = new DrawReport();
             //dr.DrawChart();
-            dr.GeneratePDF(1, EnumReportType.DayReport, "1,2,3,4", "1,2", "-1,0,1", false);
+            dr.GeneratePDF(1, EnumReportType.DayReport, "1,2,3,4", "1,2", "-1,0,1", true);
         }
         private static void DoJob(Object threadContext)
         {

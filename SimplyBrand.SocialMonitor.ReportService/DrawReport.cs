@@ -16,6 +16,7 @@ using SimplyBrand.SocialMonitor.Business;
 using SimplyBrand.SocialMonitor.Business.Utility;
 using SimplyBrand.SocialMonitor.Business.DB;
 using SimplyBrand.SocialMonitor.Business.JsonEntity;
+using System.Text.RegularExpressions;
 namespace SimplyBrand.SocialMonitor.ReportService
 {
 
@@ -346,41 +347,69 @@ namespace SimplyBrand.SocialMonitor.ReportService
 
         private void DrawData(Document document, PdfWriter writer, List<DataCenterJson> data)
         {
-            PdfPTable tableData = new PdfPTable(10);
-            for (int j = 0; j < 200; j++)
+            PdfPTable tableData = new PdfPTable(9);
+            tableData.LockedWidth = true;
+
+            //for (int j = 0; j < 200; j++)
+            //{
+            //    for (int i = 0; i < 10; i++)
+            //    {
+
+            //        PdfPCell pdfCellData = new PdfPCell();
+            //        pdfCellData = new PdfPCell(new Phrase("测试" + j + i, ContentSmallFont));
+            //        if (i == 4)
+            //            pdfCellData = new PdfPCell(new Phrase("测试测试测试测试测试测试测试测试" + j + i, ContentSmallFont));
+
+            //        if (j == 0)
+            //        {
+            //            pdfCellData.PaddingTop = 100;
+            //            pdfCellData.Border = 0;
+            //        }
+            //        else
+            //        {
+            //            pdfCellData.Border = 1;
+            //        }
+
+            //        tableData.AddCell(pdfCellData);
+            //    }
+            //}
+            Regex reg = new Regex("<.+?>");
+            List<string> listdata = new List<string>() { "来源", "关键词", "情感", "内容", "原作者", "转发/浏览量", "评论/回复量", "网站名称", "时间" };
+
+            foreach (DataCenterJson json in data)
             {
-                for (int i = 0; i < 10; i++)
+                json.datatitle = reg.Replace(json.datatitle, "");
+                List<string> clist = new List<string>() { GetPlatform(json.datasourceid), "", GetEmotional(json.emotionalvalue), json.datatitle, json.dataauthor, json.dataforward, json.datacomment, json.sitename, json.datatime };
+                foreach (string citem in clist)
                 {
-
-                    PdfPCell pdfCellData = new PdfPCell();
-                    pdfCellData = new PdfPCell(new Phrase("测试" + j + i, ContentSmallFont));
-                    if (i == 4)
-                        pdfCellData = new PdfPCell(new Phrase("测试测试测试测试测试测试测试测试" + j + i, ContentSmallFont));
-
-                    if (j == 0)
-                    {
-                        pdfCellData.PaddingTop = 100;
-                        pdfCellData.Border = 0;
-                    }
-                    else
-                    {
-                        pdfCellData.Border = 1;
-                    }
-
-                    tableData.AddCell(pdfCellData);
+                    listdata.Add(citem);
                 }
             }
-            //foreach (DataCenterJson jsn in data)
-            //{
-            //    List<string> citems = new List<string>();
-            //    citems.Add(
-            //}
+            int i = 0;
+            foreach (string item in listdata)
+            {
 
-            tableData.TotalWidth = document.PageSize.Width;
+                PdfPCell pdfCellData = new PdfPCell(new Phrase(item, ContentSmallFont));
+                if (i < 9)
+                {
+                    pdfCellData.PaddingTop = 100;
+                    pdfCellData.Border = 0;
+                }
+                else
+                {
+                    pdfCellData.Border = 1;
+                }
+                pdfCellData.HorizontalAlignment = 1;
+                tableData.AddCell(pdfCellData);
+                i++;
+            }
+
+            tableData.TotalWidth = document.PageSize.Width - 20;
             float maxlength = document.PageSize.Width;
-            float clength = (maxlength - 200) / 9;
-            tableData.SetWidths(new float[] { clength, clength, clength, clength, 230f, clength, clength, clength, clength, clength });
+            float clength = (maxlength - 300) / 8;
+            tableData.SetWidths(new float[] { clength, clength, clength, 300, clength, clength, clength, clength, clength });
             //tableData.WriteSelectedRows(0, -1, 20, document.PageSize.Height - 30, writer.DirectContent);
+
             document.Add(tableData);
         }
         private void DrawCompanyInfo(Document document, PdfWriter writer)
@@ -434,7 +463,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
             }
             return platforms + " " + keywordfamily.Replace(",", " ") + " " + emotionvalues;
         }
-        public void GeneratePDF(int sysUserId = 0, EnumReportType type = EnumReportType.DayReport, string platforms = null, string keywordFamilyIDs = null, string emotionvalues = null, bool isToday = true)
+        public void GeneratePDF(int sysUserId = 0, EnumReportType type = EnumReportType.DayReport, string platforms = null, string keywordFamilyIDs = null, string emotionvalues = null, bool isToday = true, string searchstarttime = null, string searchendtime = null, string notkeyword = null)
         {
             string keywordfamily = string.Empty;//品牌名
             SysUser sysUser = DataRepository.SysUserProvider.GetBySysUserId(sysUserId);
@@ -474,6 +503,12 @@ namespace SimplyBrand.SocialMonitor.ReportService
             if (responseHotKeywordPageJson.data != null && responseHotKeywordPageJson.data != null)
                 hotKeywordJsonList = responseHotKeywordPageJson.data.items;
 
+            //string datacenterjson = dbProvider.GetSeach(platforms, keywordFamilyIDs, "", notkeyword, searchstarttime, searchendtime, emotionvalues, 100, 1, sysUserId);
+            string datacenterjson = dbProvider.GetSeach("", "", "", "", "", "", "", 100, 1, sysUserId);
+            ResponseDataCenterJson responseDataCenterJson = JsonHelper.ParseJSON<ResponseDataCenterJson>(datacenterjson);
+            List<DataCenterJson> dataCenterJsonList = new List<DataCenterJson>();
+            if (responseDataCenterJson.data != null && responseDataCenterJson.data.items != null)
+                dataCenterJsonList = responseDataCenterJson.data.items;
 
 
             string customerContact = "";
@@ -549,7 +584,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
                         document.NewPage();
                         DrawText(document, writer, TitleFont, "网络舆情相关数据", document.PageSize.Width / 2 - 140, document.PageSize.Height - 75, 500, 50);
                         DrawText(document, writer, ContentFont, string.Format("搜索条件：{0}", GetSearchInfo(platforms, keywordfamily, emotionvalues)), 20, document.PageSize.Height - 110, document.PageSize.Width - 20, 50);
-                        DrawData(document, writer);
+                        DrawData(document, writer, dataCenterJsonList);
                         //tableData.WriteSelectedRows(0, -1, 20, document.PageSize.Height - 130, writer.DirectContent)
                         document.NewPage();
                         DrawText(document, writer, SmallTitleFont, "感谢您的阅读", 20, document.PageSize.Height - 300, 500, 50);

@@ -344,7 +344,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
             tableBackgroundInfo.WriteSelectedRows(0, -1, 50, document.PageSize.Height - 120, writer.DirectContent);
         }
 
-        private void DrawData(Document document, PdfWriter writer)
+        private void DrawData(Document document, PdfWriter writer, List<DataCenterJson> data)
         {
             PdfPTable tableData = new PdfPTable(10);
             for (int j = 0; j < 200; j++)
@@ -370,6 +370,11 @@ namespace SimplyBrand.SocialMonitor.ReportService
                     tableData.AddCell(pdfCellData);
                 }
             }
+            //foreach (DataCenterJson jsn in data)
+            //{
+            //    List<string> citems = new List<string>();
+            //    citems.Add(
+            //}
 
             tableData.TotalWidth = document.PageSize.Width;
             float maxlength = document.PageSize.Width;

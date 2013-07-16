@@ -64,7 +64,8 @@
                       '<li><a class="ajax-link" href="myreport.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_myreport") + '</span></a></li>' +
                       '<li class="nav-header hidden-tablet">' + jQuery.i18n.prop("sb_networkopinion") + '</li>' +
                       '<li><a class="ajax-link" href="todaydynamic.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_todaydynamic") + '</span></a></li>' +
-                      '<li><a class="ajax-link" href="historydata.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_historydata") + '</span></a></li>';
+                      '<li><a class="ajax-link" href="historydata.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_historydata") + '</span></a></li>' +
+                      '<li><a class="ajax-link" href="datacenter.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_datacenter") + '</span></a></li>';
         //'<li><a class="ajax-link" href="searchlist.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_searchrecord") + '</span></a></li>'
         $("#main_menu").empty().append(mainmenu);//菜单
 
@@ -191,7 +192,7 @@
         selectOtherMonths: true,
         onSelect: function (dateText, inst) {
             var date = $(this).datepicker('getDate');
-            startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay()+1);
+            startDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 1);
             endDate = new Date(date.getFullYear(), date.getMonth(), date.getDate() - date.getDay() + 7);
             var dateFormat = inst.settings.dateFormat || $.datepicker._defaults.dateFormat;
             //$('#startDate').text($.datepicker.formatDate(dateFormat, startDate, inst.settings));

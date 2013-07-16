@@ -8,11 +8,11 @@
     <div>
         <ul class="breadcrumb">
             <li>
-                <a href="#">网络舆情</a>
+                <a href="#" id="sb_networkopinion">网络舆情</a>
                 <span class="divider">/</span>
             </li>
             <li>
-                <a href="#">数据中心</a>
+                <a href="#" id="sb_datacenter">数据中心</a>
             </li>
         </ul>
     </div>

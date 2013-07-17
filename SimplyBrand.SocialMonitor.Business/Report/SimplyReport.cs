@@ -241,7 +241,7 @@ namespace SimplyBrand.SocialMonitor.Business.Report
             Phrase phraseDate = new Phrase(string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), RepostDateFont);
             ColumnText colTextDate = new ColumnText(writer.DirectContent);
             colTextDate.AddText(phraseDate);
-            colTextDate.SetSimpleColumn(50, 550, 700, 50, 1, Element.ALIGN_CENTER);
+            colTextDate.SetSimpleColumn(100, 550, 700, 50, 1, Element.ALIGN_CENTER);
             colTextDate.Go();
         }
 

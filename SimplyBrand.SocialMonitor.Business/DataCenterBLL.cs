@@ -51,7 +51,7 @@ namespace SimplyBrand.SocialMonitor.Business
                 }
                 else
                 {
-                    starttime = DateTime.Parse(SqlDateTime.MinValue.ToString());
+                    starttime = DateTime.Parse(DateTime.Now.AddDays(-31).ToString("yyyy-MM-dd"));
                     endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
 
                 }
@@ -95,7 +95,7 @@ namespace SimplyBrand.SocialMonitor.Business
                 }
                 else
                 {
-                    starttime = DateTime.Parse(SqlDateTime.MinValue.ToString());
+                    starttime = DateTime.Parse(DateTime.Now.AddDays(-31).ToString("yyyy-MM-dd"));
                     endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
 
                 }

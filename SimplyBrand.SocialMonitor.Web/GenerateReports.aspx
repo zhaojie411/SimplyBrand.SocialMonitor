@@ -75,6 +75,7 @@
             };
             var lock = false;
             $("#gen_report").click(function () {
+                
                 if (lock)
                     return false;
                 var platforms = getCheckedValue("platsource");
@@ -102,14 +103,13 @@
                     type: "POST",
                     data: { from: $.trim($("#from").val()), to: $.trim($("#to").val()), platforms: platforms, keywordfamily: keywordfamily, emotionvalues: emotionvalues },
                     beforeSend: function () {
-                        $(this).after('  <span id="loading"><img style="width:16px;height:11px;" src="/Themes/Default/img/ajax-loaders/ajax-loader-4.gif" title="正在生成报告..."></span>');
+                        $("#gen_report").after('  <span id="loading"><img style="width:16px;height:11px;" src="/Themes/Default/img/ajax-loaders/ajax-loader-4.gif" title="正在生成报告..."></span>');
                         lock = true;
                     },
                     success: function (data) {
                         try {
                             $("#loading").remove();
                             lock = false;
-                            console.info(data);
                             data = JSON.parse(data);
                             var url = data.data.filepath + "/" + data.data.filename;
                             var a = document.createElement('a');

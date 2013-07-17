@@ -176,8 +176,8 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                 legend1.LegendStyle = System.Windows.Forms.DataVisualization.Charting.LegendStyle.Row;
                 legend1.Name = "Default";
                 chart.Legends.Add(legend1);
-                chart.ChartAreas["Default"].CursorX.Interval = 1;
-                chart.ChartAreas["Default"].CursorX.IntervalType = DateTimeIntervalType.Hours;
+
+                List<DateTime> dtList = new List<DateTime>();
 
                 Random random = new Random();
                 foreach (string key in dicData.Keys)
@@ -199,17 +199,16 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                     chart.Series[key].ChartType = SeriesChartType.Spline;
                     foreach (var item in dicData[key])
                     {
-                        if (item.key > 100)
-                        {
-                            chart.Series[key].Points.AddXY(DateTime.Parse(item.title), item.value);
-                            chart.Series[key].XValueType = ChartValueType.DateTime;
-                        }
-                        else
-                            chart.Series[key].Points.AddXY(item.key, item.value);
+                        chart.Series[key].Points.AddXY(DateTime.Parse(item.title), item.value);
+                        chart.Series[key].XValueType = ChartValueType.DateTime;
+
+                        dtList.Add(DateTime.Parse(item.title));
                     }
 
 
                 }
+                dtList = dtList.OrderByDescending(p => p).ToList();
+
                 chart.Legends["Default"].BackColor = Color.Transparent;
                 chart.Legends["Default"].BackSecondaryColor = Color.White;
                 chart.Legends["Default"].BackGradientStyle = GradientStyle.None;
@@ -223,6 +222,19 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                 //chart.ChartAreas["Default"].AxisX.MajorGrid.Interval = 1;
                 chart.ChartAreas["Default"].AxisY.MajorGrid.LineColor = Color.LightGray;
                 chart.ChartAreas["Default"].AxisX.MajorGrid.LineColor = Color.LightGray;
+                if ((dtList[0] - dtList[dtList.Count - 1]).Days <= 6)
+                {
+                    chart.ChartAreas["Default"].AxisX.LabelStyle.Format = "MM-dd HH";
+                    chart.ChartAreas["Default"].CursorX.Interval = 1;
+                    chart.ChartAreas["Default"].CursorX.IntervalType = DateTimeIntervalType.Hours;
+                }
+                else
+                {
+
+                    chart.ChartAreas["Default"].AxisX.LabelStyle.Format = "MM-dd";
+                    chart.ChartAreas["Default"].CursorX.Interval = 1;
+                    chart.ChartAreas["Default"].CursorX.IntervalType = DateTimeIntervalType.Days;
+                }
                 using (MemoryStream ms = new MemoryStream())
                 {
                     chart.SaveImage(ms, ChartImageFormat.Bmp);

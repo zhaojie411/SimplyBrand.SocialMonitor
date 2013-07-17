@@ -15,7 +15,8 @@ namespace SimplyBrand.SocialMonitor.Web.Ajax
         {
             base.ProcessRequest(context);
 
-            UserReportController target = new UserReportController();
+            //UserReportController target = new UserReportController();
+            WCFClient target = new WCFClient();
             string from = context.Request.Form["from"] == null ? "" : context.Request.Form["from"].ToString();
             string to = context.Request.Form["to"] == null ? "" : context.Request.Form["to"].ToString();
             string keywordfamily = context.Request.Form["keywordfamily"] == null ? "" : context.Request.Form["keywordfamily"].ToString();

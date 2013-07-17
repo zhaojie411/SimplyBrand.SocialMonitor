@@ -116,6 +116,19 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                 return new Font(baseFont, 8);
             }
         }
+
+
+        public Font ContentSmallGreenFont
+        {
+            get
+            {
+                Font font = new Font(baseFont, 8);
+                font.SetColor(39, 64, 139);
+                return font;
+            }
+        }
+
+
         #endregion
 
         public void RegisterFont()
@@ -228,7 +241,7 @@ namespace SimplyBrand.SocialMonitor.Business.Report
             Phrase phraseDate = new Phrase(string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), RepostDateFont);
             ColumnText colTextDate = new ColumnText(writer.DirectContent);
             colTextDate.AddText(phraseDate);
-            colTextDate.SetSimpleColumn(20, 550, 700, 50, 1, Element.ALIGN_CENTER);
+            colTextDate.SetSimpleColumn(50, 550, 700, 50, 1, Element.ALIGN_CENTER);
             colTextDate.Go();
         }
 
@@ -371,34 +384,42 @@ namespace SimplyBrand.SocialMonitor.Business.Report
             tableData.LockedWidth = true;
             Regex reg = new Regex("<.+?>");
             List<string> listdata = new List<string>() { "来源", "关键词", "情感", "内容", "原作者", "转发/浏览量", "评论/回复量", "网站名称", "时间" };
+            //标题
+            foreach (string item in listdata)
+            {
+                PdfPCell pdfCellData = new PdfPCell(new Phrase(item, ContentSmallFont));
+                pdfCellData.PaddingTop = 100;
+                pdfCellData.Border = 0;
+                pdfCellData.HorizontalAlignment = PdfPCell.ALIGN_LEFT;
+                tableData.AddCell(pdfCellData);
+            }
+
 
             foreach (DataCenterJson json in data)
             {
                 json.datatitle = reg.Replace(json.datatitle, "");
                 List<string> clist = new List<string>() { GetPlatform(json.datasourceid), "", GetEmotional(json.emotionalvalue), json.datatitle, json.dataauthor, json.dataforward, json.datacomment, json.sitename, json.datatime };
+                int index = 0;
                 foreach (string citem in clist)
                 {
-                    listdata.Add(citem);
-                }
-            }
-            int i = 0;
-            foreach (string item in listdata)
-            {
 
-                PdfPCell pdfCellData = new PdfPCell(new Phrase(item, ContentSmallFont));
-                if (i < 9)
-                {
-                    pdfCellData.PaddingTop = 100;
+                    index++;
+                    Phrase phrase = new Phrase(citem, ContentSmallFont);
+                    if (index == 4)
+                    {
+
+                        Anchor ah = new iTextSharp.text.Anchor(" 点击查看", ContentSmallGreenFont);
+                        ah.Reference = json.dataurl;
+                        phrase.Add(ah);
+                    }
+                    PdfPCell pdfCellData = new PdfPCell(phrase);
                     pdfCellData.Border = 0;
+                    pdfCellData.HorizontalAlignment = PdfPCell.ALIGN_LEFT;
+                    tableData.AddCell(pdfCellData);
                 }
-                else
-                {
-                    pdfCellData.Border = 1;
-                }
-                pdfCellData.HorizontalAlignment = PdfPCell.ALIGN_LEFT;
-                tableData.AddCell(pdfCellData);
-                i++;
             }
+
+
 
             tableData.TotalWidth = document.PageSize.Width - 20;
             float maxlength = document.PageSize.Width;

@@ -9,6 +9,7 @@ using SimplyBrand.SocialMonitor.DAL.Data;
 using SimplyBrand.SocialMonitor.DAL.Data.Bases;
 using SimplyBrand.SocialMonitor.DAL.Data.SqlClient;
 using SimplyBrand.SocialMonitor.DAL.Entities;
+using SimplyBrand.SocialMonitor.Business.Report;
 namespace SimplyBrand.SocialMonitor.Business
 {
     public class UserReportBLL
@@ -30,7 +31,7 @@ namespace SimplyBrand.SocialMonitor.Business
                 DateTime startTime = DateTime.Now;
                 DateTime endTime = DateTime.Now;
                 DateTime currentTime = DateTime.MinValue;
-                if (reportType == (int)EnumReportType.DailyReport)
+                if (reportType == (int)EnumReportType.DayReport)
                 {
                     DateTime.TryParse(date, out currentTime);
                     if (currentTime == DateTime.MinValue)
@@ -42,13 +43,13 @@ namespace SimplyBrand.SocialMonitor.Business
                     startTime = new DateTime(currentTime.Year, currentTime.Month, currentTime.Day);
                     endTime = startTime.AddDays(1);
                 }
-                else if (reportType == (int)EnumReportType.WeeklyReport)
+                else if (reportType == (int)EnumReportType.WeekDayReport)
                 {
                     string[] strtime = date.Split('~');
                     startTime = DateTime.Parse(strtime[0].Trim());
                     endTime = DateTime.Parse(strtime[1]).AddDays(1);
                 }
-                else if (reportType == (int)EnumReportType.MonthlyReport)
+                else if (reportType == (int)EnumReportType.MonthReport)
                 {
                     string[] strtime = date.Split('-');
                     startTime = DateTimeHelper.GetFirstDayOfMonth(int.Parse(strtime[0]), int.Parse(strtime[1]));
@@ -170,6 +171,46 @@ namespace SimplyBrand.SocialMonitor.Business
             if (tlist.Count > 0)
                 return tlist[tlist.Count - 1];
             return null;
+        }
+
+        public string GeneratePDF(int sysUserId, string reportStarttime, string reportEndTime, EnumReportType type, bool isSysGen, string platforms, string keywordFamilyIDs, string emotionvalues)
+        {
+            ResponseUserReportJson response = new ResponseUserReportJson();
+            try
+            {
+                DateTime start = DateTime.MaxValue;
+                DateTime end = DateTime.MaxValue;
+
+                DateTime.TryParse(reportStarttime, out start);
+                DateTime.TryParse(reportEndTime, out end);
+                if (start == DateTime.MaxValue || end == DateTime.MaxValue)
+                {
+                    response.issucc = false;
+                    response.errormsg = ConstHelper.PARAMETER_ERROR;
+                    return JsonHelper.ToJson(response);
+                }
+
+                SimplyReport simplyReport = new SimplyReport();
+                UserReport entity = simplyReport.GeneratePDF(sysUserId, start, end, type, isSysGen, platforms, keywordFamilyIDs, emotionvalues);
+                if (entity != null && entity.UserReportId > 0)
+                {
+                    response.issucc = true;
+                    response.data = new UserReportJson();
+                    response.data = JsonEntityUtility.SetJsonEntity(response.data, entity) as UserReportJson;
+                }
+                else
+                {
+                    response.issucc = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.issucc = false;
+                response.errormsg = ex.Message + ex.StackTrace; //ConstHelper.INNER_ERROR;
+                LogHelper.WriteLog(ex);
+            }
+
+            return JsonHelper.ToJson(response);
         }
 
     }

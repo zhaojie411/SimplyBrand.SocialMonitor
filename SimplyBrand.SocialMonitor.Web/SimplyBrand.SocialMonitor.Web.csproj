@@ -96,6 +96,7 @@
   <ItemGroup>
     <Content Include="DataCenter.aspx" />
     <Content Include="Default.aspx" />
+    <Content Include="GenerateReports.aspx" />
     <Content Include="Global.asax" />
     <Content Include="HistoryData.aspx" />
     <Content Include="InfoCenter.aspx" />
@@ -401,6 +402,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Ajax\BaseAjax.cs" />
+    <Compile Include="Ajax\GeneratePDF.ashx.cs">
+      <DependentUpon>GeneratePDF.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Ajax\GetContactUser.ashx.cs">
       <DependentUpon>GetContactUser.ashx</DependentUpon>
     </Compile>
@@ -459,6 +463,13 @@
     </Compile>
     <Compile Include="Default.aspx.designer.cs">
       <DependentUpon>Default.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="GenerateReports.aspx.cs">
+      <DependentUpon>GenerateReports.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="GenerateReports.aspx.designer.cs">
+      <DependentUpon>GenerateReports.aspx</DependentUpon>
     </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -550,6 +561,7 @@
     <Content Include="Ajax\GetPlatFrom.ashx" />
     <Content Include="Ajax\GetUserReport.ashx" />
     <Content Include="Ajax\GetHotKeyword.ashx" />
+    <Content Include="Ajax\GeneratePDF.ashx" />
     <None Include="Properties\PublishProfiles\socialmonitor.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -559,6 +571,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="sysreports\" />
     <Folder Include="sysuserlogo\" />
     <Folder Include="Themes\Default\img\gallery\.quarantine\" />
   </ItemGroup>
@@ -585,7 +598,7 @@
         <WebProjectProperties>
           <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
-          <DevelopmentServerPort>9937</DevelopmentServerPort>
+          <DevelopmentServerPort>50039</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
           <IISUrl>http://localhost:8698/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>

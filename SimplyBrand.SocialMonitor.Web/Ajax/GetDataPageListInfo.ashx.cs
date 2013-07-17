@@ -17,18 +17,18 @@ namespace SimplyBrand.SocialMonitor.Web.Ajax
 
             SimplyBrand.SocialMonitor.Controller.DataCenterSeachController target = new Controller.DataCenterSeachController();
 
-            string sourceids= context.Request["sourceids"] == null ? "": context.Request["sourceids"].ToString();
+            string sourceids= context.Request["sourceids"] == "0" ? "": context.Request["sourceids"].ToString();
 
             string familyids = context.Request["familyids"] == null ? "" : context.Request["familyids"].ToString();
             string keyvalue = context.Request["keyvalue"] == null ? "" : context.Request["keyvalue"].ToString();
 
             string notkeyvalue = context.Request["notkeyvalue"] == null ? "" : context.Request["notkeyvalue"].ToString();
 
-            string starttime = context.Request["starttime"] == null ? "" : context.Request["starttime"].ToString();
+            string starttime = DateTime.Now.ToString("yyyy/MM/dd 00:00:00");
 
-            string endtime = context.Request["endtime"] == null ? "" : context.Request["endtime"].ToString();
+            string endtime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss" );
 
-            string emotional = context.Request["endtime"] == null ? "" : context.Request["endtime"].ToString();
+            string emotional = context.Request["emotional"] == null ? "" : context.Request["emotional"].ToString();
 
             int pageindex = context.Request["pageindex"] == "" ? 0 :Convert.ToInt32(context.Request["pageindex"].ToString());  
           

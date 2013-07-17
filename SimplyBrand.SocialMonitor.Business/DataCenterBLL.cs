@@ -47,7 +47,7 @@ namespace SimplyBrand.SocialMonitor.Business
                 if (isToday)
                 {
                     starttime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd"));
-                    endtime = DateTime.Now.AddDays(1);
+                    endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace SimplyBrand.SocialMonitor.Business
 
                 }
                 //可以加校验 
-                Dictionary<string, List<DataCenterSummaryItemJson>> dic = GetSummaryData(keywordFamilyIDs, platforms, emotionvalues, isToday, starttime.ToString(), endtime.ToString());
+                Dictionary<string, List<DataCenterSummaryItemJson>> dic = GetSummaryData(sysUserId, keywordFamilyIDs, platforms, emotionvalues, isToday, starttime.ToString(), endtime.ToString());
 
                 response.data = new DataCenterSummaryJson();
                 response.data.items = dic;
@@ -77,11 +77,7 @@ namespace SimplyBrand.SocialMonitor.Business
             response.issucc = true;
             try
             {
-                TList<KeywordFamily> tlist = DataRepository.KeywordFamilyProvider.GetBySysUserId(sysUserId);
-                if (string.IsNullOrEmpty(keywordFamilyIDs))
-                {
-                    keywordFamilyIDs = string.Join(",", tlist.Select(p => p.KeywordFamilyId).ToList());
-                }
+
                 if (string.IsNullOrEmpty(platforms))
                 {
                     platforms = (int)EnumPlatform.Weibo + "," + (int)EnumPlatform.News + "," + (int)EnumPlatform.Blog + "," + (int)EnumPlatform.BBS;
@@ -91,7 +87,7 @@ namespace SimplyBrand.SocialMonitor.Business
                 if (isToday)
                 {
                     starttime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd"));
-                    endtime = DateTime.Now.AddDays(1);
+                    endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
                 }
                 else
                 {
@@ -99,7 +95,7 @@ namespace SimplyBrand.SocialMonitor.Business
                     endtime = DateTime.Parse(DateTime.Now.ToString("yyyy-MM-dd") + " 23:59:59");
 
                 }
-                List<DataCenterSummaryItemJson> list = GetEmotionalData(keywordFamilyIDs, platforms, starttime.ToString(), endtime.ToString());
+                List<DataCenterSummaryItemJson> list = GetEmotionalData(sysUserId, keywordFamilyIDs, platforms, starttime.ToString(), endtime.ToString());
                 response.data = list;
 
             }
@@ -111,7 +107,6 @@ namespace SimplyBrand.SocialMonitor.Business
             }
             return JsonHelper.ToJson(response);
         }
-
 
         private string getEmtionalValue(int type)
         {
@@ -133,10 +128,10 @@ namespace SimplyBrand.SocialMonitor.Business
             return value;
         }
 
-        public List<DataCenterSummaryItemJson> GetEmotionalData(string keywordFamilyIDs, string platforms, string starttime, string endtime)
+        public List<DataCenterSummaryItemJson> GetEmotionalData(int sysUserId, string keywordFamilyIDs, string platforms, string starttime, string endtime)
         {
             //TList<DataCenter> tlist = FindDataCenter(keywordFamilyIDs, platforms, isToday, emotionvalues);
-            VList<ViewDataCenter> vlist = FindViewDataCenter(keywordFamilyIDs, platforms, starttime, endtime, string.Empty);
+            VList<ViewDataCenter> vlist = FindViewDataCenter(sysUserId, keywordFamilyIDs, platforms, starttime, endtime, string.Empty);
             var query = from t in vlist
                         group t by (int)t.Emotionalvalue
                             into g
@@ -156,22 +151,72 @@ namespace SimplyBrand.SocialMonitor.Business
         }
 
 
+        public Dictionary<string, List<DataCenterSummaryItemJson>> GetSummaryData(int sysUserId, string keywordFamilyIDs, string platforms, string emotionvalues, string starttime, string endtime)
+        {
+            VList<ViewDataCenter> vlist = FindViewDataCenter(sysUserId, keywordFamilyIDs, platforms, starttime, endtime, emotionvalues);
+            //按小时排序
+            bool flag = (DateTime.Parse(starttime) - DateTime.Parse(endtime)).Days > 6;
 
+            var query = from t in vlist
+                        group t by new
+                        {
 
-        public Dictionary<string, List<DataCenterSummaryItemJson>> GetSummaryData(string keywordFamilyIDs, string platforms, string emotionvalues, bool isToday, string starttime, string endtime)
+                            Date = flag ? ((DateTime)t.Datatime).ToString("yyyy-MM-dd") : ((DateTime)t.Datatime).ToString("yyyy-MM-dd hh"),
+                            Name = t.KeywordFamilyName  //Sitename
+                        }
+                            into g
+                            select new
+                            {
+                                g.Key,
+                                Count = g.Count()
+                            };
+            Dictionary<string, List<DataCenterSummaryItemJson>> dic = new Dictionary<string, List<DataCenterSummaryItemJson>>();
+            Dictionary<string, List<DataCenterSummaryItemJson>> dicNew = new Dictionary<string, List<DataCenterSummaryItemJson>>();
+            foreach (var item in query)
+            {
+                if (!dic.ContainsKey(item.Key.Name))
+                {
+                    dic.Add(item.Key.Name, new List<DataCenterSummaryItemJson>());
+                }
+                dic[item.Key.Name].Add(
+                    new DataCenterSummaryItemJson()
+                    {
+                        key = Decimal.ToInt64(Decimal.Divide(DateTime.Parse(flag ? item.Key.Date : item.Key.Date + ":00:00").Ticks - 621355968000000000, 10000)),
+                        value = item.Count,
+                        title = flag ? item.Key.Date : item.Key.Date + ":00:00"
+                    });
+            }
+
+            foreach (string item in dic.Keys)
+            {
+                dicNew.Add(item, dic[item].OrderBy(p => p.key).ToList());
+            }
+            return dicNew;
+        }
+        /// <summary>
+        /// 页面上获取折线图
+        /// </summary>
+        /// <param name="keywordFamilyIDs"></param>
+        /// <param name="platforms"></param>
+        /// <param name="emotionvalues"></param>
+        /// <param name="isToday"></param>
+        /// <param name="starttime"></param>
+        /// <param name="endtime"></param>
+        /// <returns></returns>
+        public Dictionary<string, List<DataCenterSummaryItemJson>> GetSummaryData(int sysUserId, string keywordFamilyIDs, string platforms, string emotionvalues, bool isToday, string starttime, string endtime)
         {
             //TList<DataCenter> tlist = FindDataCenter(keywordFamilyIDs, platforms, isToday, emotionvalues);
-            VList<ViewDataCenter> vlist = FindViewDataCenter(keywordFamilyIDs, platforms, starttime, endtime, emotionvalues);
+            VList<ViewDataCenter> vlist = FindViewDataCenter(sysUserId, keywordFamilyIDs, platforms, starttime, endtime, emotionvalues);
 
             if (isToday)
             {
                 var query = from t in vlist
                             group t by new
-                                {
+                            {
 
-                                    Hour = ((DateTime)t.Datatime).Hour,
-                                    Name = t.KeywordFamilyName  //Sitename
-                                }
+                                Hour = ((DateTime)t.Datatime).Hour,
+                                Name = t.KeywordFamilyName  //Sitename
+                            }
                                 into g
                                 select new
                                 {
@@ -264,17 +309,19 @@ namespace SimplyBrand.SocialMonitor.Business
         }
 
 
-        public VList<ViewDataCenter> FindViewDataCenter(string keywordFamilyIDs, string platforms, string starttime, string endtime, string emotionvalues)
+        public VList<ViewDataCenter> FindViewDataCenter(int sysUserId, string keywordFamilyIDs, string platforms, string starttime, string endtime, string emotionvalues)
         {
-            if (string.IsNullOrEmpty(keywordFamilyIDs))
-            {
-                return new VList<ViewDataCenter>();
-            }
+            //if (string.IsNullOrEmpty(keywordFamilyIDs))
+            //{
+            //    return new VList<ViewDataCenter>();
+            //}
             ViewDataCenterParameterBuilder builder = new ViewDataCenterParameterBuilder();
             builder.Clear();
             builder.Junction = SqlUtil.AND;
+            builder.Append(ViewDataCenterColumn.SysUserId, sysUserId.ToString());
             builder.AppendIn(ViewDataCenterColumn.KeywordFamilyId, keywordFamilyIDs.Split(','));
             builder.AppendIn(ViewDataCenterColumn.Datasourceid, platforms.Split(','));
+
             if (!string.IsNullOrEmpty(starttime))
             {
                 builder.AppendGreaterThanOrEqual(ViewDataCenterColumn.Datatime, starttime);
@@ -292,10 +339,10 @@ namespace SimplyBrand.SocialMonitor.Business
 
         public VList<ViewDataCenter> FindViewDataCenter(string keywordFamilyIDs, string platforms, bool isToday, string emotionvalues = null)
         {
-            if (string.IsNullOrEmpty(keywordFamilyIDs))
-            {
-                return new VList<ViewDataCenter>();
-            }
+            //if (string.IsNullOrEmpty(keywordFamilyIDs))
+            //{
+            //    return new VList<ViewDataCenter>();
+            //}
             ViewDataCenterParameterBuilder builder = new ViewDataCenterParameterBuilder();
             builder.Clear();
             builder.Junction = SqlUtil.AND;
@@ -383,5 +430,7 @@ namespace SimplyBrand.SocialMonitor.Business
             builder.AppendIn(UserKeywordColumn.KeywordFamilyId, keywordFamilyIDs);
             return DataRepository.UserKeywordProvider.Find(builder.GetParameters());
         }
+
+
     }
 }

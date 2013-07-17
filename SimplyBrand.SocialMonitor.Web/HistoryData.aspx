@@ -26,7 +26,7 @@
                 </p>
                 <p>
                     <b>情&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;感：</b>
-                    <input type="checkbox" id="cbAllEmotional" value="">全部 
+                    <input type="checkbox" id="cbAllEmotional" name="cbAllEmotional" value="">全部 
                         <input type="checkbox" name="emotionvalues" value="1">正面&nbsp;&nbsp;
                         <input type="checkbox" name="emotionvalues" value="0">中性&nbsp;&nbsp;
                         <input type="checkbox" name="emotionvalues" value="-1">负面&nbsp;&nbsp;

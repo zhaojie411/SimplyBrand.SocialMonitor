@@ -14,7 +14,10 @@ namespace SimplyBrand.SocialMonitor.Controller
         {
             return bll.GetSeach(sourceids, familyids, keyvalue, notkeyvalue, starttime, endtime, emotional, pageSize, pageindex, sysuserid);
         }
-
+        public string GetSeach(string sourceids, string keyvalue, string notkeyvalue, string starttime, string endtime, string emotional, int pageSize, int pageindex)
+        {
+            return bll.GetSeach(sourceids,  keyvalue, notkeyvalue, starttime, endtime, emotional, pageSize, pageindex);
+        }
 
         public string GetSummaryData(int sysUserId, string keywordFamilyIDs, string platforms, string emotionvalues, bool isToday)
         {
@@ -27,5 +30,15 @@ namespace SimplyBrand.SocialMonitor.Controller
             IDBProvider dbProvider = DBProviderFactory.GetDBProvider(dbType);
             return dbProvider.GetEmotionalData(sysUserId, keywordFamilyIDs, platforms, isToday);
         }
+        public string UpdateEmotional(long dataid, string emotionalvalue)
+        {
+            return bll.UpdateEmotional(dataid, emotionalvalue);
+        }
+
+        public string Delete(long dataid)
+        {
+            return bll.Delete(dataid);     
+        }
+       
     }
 }

@@ -53,6 +53,7 @@
                             <a id="download_month" style="margin-top: -9px; margin-left: 150px;" class="btn btn-primary"><i class="icon-download-alt"></i><span name="sb_download">下载</span></a>
                         <p>
                     </div>
+                    
                 </div>
             </div>
         </div>
@@ -66,7 +67,16 @@
                     data: { reporttype: reporttype, date: date },
                     beforeSend: function () { },
                     success: function (data) {
-                        console.info(data);
+                        try {
+                            data = JSON.parse(data);
+                            var url = data.data.filepath + "/" + data.data.filename;
+                            var a = document.createElement('a');
+                            a.href = url;
+                            a.target = '_blank';
+                            document.body.appendChild(a);
+                            a.click();
+
+                        } catch (e) { }
                     },
                     error: function () { }
                 });

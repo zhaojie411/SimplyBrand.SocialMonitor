@@ -1,7 +1,8 @@
 ﻿Highcharts.setOptions({
     lang: {
         months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
-        weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六']
+        weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
+        shortMonths: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     },
     colors: ['#228B22', '#FF8000', '#E3170D']
 });
@@ -19,6 +20,7 @@ getKeywordFamily = function () {
                 html += '<input type="checkbox" value="' + item.id + '" name="keywordfamily">' + item.name + '&nbsp;&nbsp;';
             });
             $("#p_keywordfamily").html(html);
+
         } catch (e) { }
     });
 }
@@ -113,7 +115,7 @@ function drawLineChart(keywordfamily, platforms, isToday, emotionvalues) {
                     $.each(item.Value, function (cindex, citem) {
                         if (isToday) {
                             var date = new Date(new Date().getFullYear(), new Date().getMonth(), new Date().getDate(), citem.key);
-                            dataxy.push([date.getTime() + 8 * 3600 * 1000, citem.value]);
+                            dataxy.push([date.getTime() + 28800000, citem.value]);
                         }
                         else {
                             dataxy.push([citem.key, citem.value]);
@@ -128,7 +130,9 @@ function drawLineChart(keywordfamily, platforms, isToday, emotionvalues) {
                 if (isToday) {
                     dateTimeLabelFormats = { hour: '%H:00', };
                 } else {
-                    dateTimeLabelFormats = { day: '%B %e日', };
+                    //dateTimeLabelFormats = { day: '%b', };
+
+                    dateTimeLabelFormats = { hour: '%H:00', };
                 }
 
                 $('#container').highcharts({
@@ -145,6 +149,21 @@ function drawLineChart(keywordfamily, platforms, isToday, emotionvalues) {
                         type: 'datetime',
                         dateTimeLabelFormats: dateTimeLabelFormats,
                         //categories: ["1" , "2", "3", "4", "5", "6"]
+                        //labels: { enabled: false }
+                        labels: {
+                            formatter: function () {
+
+                                var vDate = new Date(this.value - 28800000);
+
+                                if (isToday) {
+                                    return (vDate.getHours()) + ":00"; //+ vDate.getMinutes();
+                                }
+                                else {
+                                    return (vDate.getMonth() + 1) + "月" + vDate.getDate() + "日";
+                                }
+
+                            }
+                        }
                     },
                     yAxis: {
                         title: {
@@ -175,23 +194,23 @@ function drawLineChart(keywordfamily, platforms, isToday, emotionvalues) {
     });
 }
 function drawCloudWord(keywordfamily) {
-
     $.ajax({
         url: "/Ajax/GetHotKeyword.ashx",
         type: "POST",
         data: { keywordfamily: keywordfamily },
         beforeSend: function () { },
         success: function (data) {
-            data = JSON.parse(data);
-            var word_list = [];
-            $.each(data.data.items, function (index, item) {
-             
-                word_list.push({ text: item.name, weight: item.weight });
-            });
-            //var word_list = [
-            //          { text: "抑郁症", weight: 11, link: { href: "http://weibo.com/dmonsns/", target: "_blank" } },
-            //          { text: "患者", weight: 10.5, html: { title: "My Title", "class": "custom-class" }, link: { href: "http://weibo.com/dmonsns/", target: "_blank" } },
-            $("#containers").jQCloud(word_list);
+            try {
+                data = JSON.parse(data);
+                var word_list = [];
+                $.each(data.data.items, function (index, item) {
+                    word_list.push({ text: item.name, weight: item.weight });
+                });
+                //var word_list = [
+                //          { text: "抑郁症", weight: 11, link: { href: "http://weibo.com/dmonsns/", target: "_blank" } },
+                //          { text: "患者", weight: 10.5, html: { title: "My Title", "class": "custom-class" }, link: { href: "http://weibo.com/dmonsns/", target: "_blank" } },
+                $("#containers").jQCloud(word_list);
+            } catch (e) { console.log(e); }
         },
         error: function () { }
     });
@@ -237,6 +256,7 @@ $(document).ready(function () {
     });
     $("input[type=checkbox]").live("click", function (e) {
         var name = $(this).attr("name");
+        
         if (name.indexOf("All") <= 0) {
             if ($("input[name=" + name + "]").length == $("input[name=" + name + "]:checked").length) {
                 $(this).parent().find("input")[0].checked = true;

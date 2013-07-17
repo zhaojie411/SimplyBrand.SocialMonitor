@@ -1,35 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Windows.Forms.DataVisualization.Charting;
+using System.Text.RegularExpressions;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
-using SimplyBrand.SocialMonitor.DAL.Data;
-using SimplyBrand.SocialMonitor.DAL.Data.Bases;
-using SimplyBrand.SocialMonitor.DAL.Data.SqlClient;
-using SimplyBrand.SocialMonitor.DAL.Entities;
-using System.Configuration;
-using SimplyBrand.SocialMonitor.Business;
-using SimplyBrand.SocialMonitor.Business.Utility;
 using SimplyBrand.SocialMonitor.Business.DB;
 using SimplyBrand.SocialMonitor.Business.JsonEntity;
-using System.Text.RegularExpressions;
-namespace SimplyBrand.SocialMonitor.ReportService
+using SimplyBrand.SocialMonitor.Business.Utility;
+using SimplyBrand.SocialMonitor.DAL.Data;
+using SimplyBrand.SocialMonitor.DAL.Entities;
+
+namespace SimplyBrand.SocialMonitor.Business.Report
 {
 
-    public enum EnumReportType
+    public class SimplyReport
     {
-        DayReport = 1,
-        WeekDayReport = 2,
-        MonthReport = 3
-    }
-    public class DrawReport
-    {
-
-        DrawChart drawChart = new DrawChart();
+        SimplyChart drawChart = new SimplyChart();
         public static BaseFont baseFont = null;
 
         #region 配置路径
@@ -161,7 +150,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
 
 
 
-        private string GetReportDate(EnumReportType type)
+        private string GetReportDate(EnumReportType type, DateTime startTime, DateTime endTime)
         {
             string strDate = "";
             string start = "";
@@ -169,16 +158,21 @@ namespace SimplyBrand.SocialMonitor.ReportService
             switch (type)
             {
                 case EnumReportType.DayReport:
-                    strDate = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 00：00 - hh:00");
+                    strDate = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 00:00 - hh:00");
                     break;
                 case EnumReportType.WeekDayReport:
-                    start = DateTime.Now.AddDays(-8).ToString("yyyy-MM-dd 00：00");
-                    end = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 17：00");
+                    start = DateTime.Now.AddDays(-8).ToString("yyyy-MM-dd 00:00");
+                    end = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 17:00");
                     strDate = start + " - " + end;
                     break;
                 case EnumReportType.MonthReport:
-                    start = DateTime.Now.AddMonths(-1).AddDays(1).ToString("yyyy-MM-dd 00：00");
-                    end = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 17：00");
+                    start = DateTime.Now.AddMonths(-1).AddDays(1).ToString("yyyy-MM-dd 00:00");
+                    end = DateTime.Now.AddDays(-1).ToString("yyyy-MM-dd 17:00");
+                    strDate = start + " - " + end;
+                    break;
+                case EnumReportType.Custom:
+                    start = startTime.ToString("yyyy-MM-dd 00:00");
+                    end = endTime.ToString("yyyy-MM-dd 17:00");
                     strDate = start + " - " + end;
                     break;
             }
@@ -194,6 +188,8 @@ namespace SimplyBrand.SocialMonitor.ReportService
                     return "周报";
                 case EnumReportType.MonthReport:
                     return "月报";
+                case EnumReportType.Custom:
+                    return "自定义";
             }
             return "";
         }
@@ -226,10 +222,10 @@ namespace SimplyBrand.SocialMonitor.ReportService
             return "";
         }
 
-        public void DrawReportDate(Document document, PdfWriter writer, EnumReportType type)
+        public void DrawReportDate(Document document, PdfWriter writer, EnumReportType type, DateTime reportStarttime, DateTime reportEndTime)
         {
 
-            Phrase phraseDate = new Phrase(string.Format("报告期间：{0}", GetReportDate(type)), RepostDateFont);
+            Phrase phraseDate = new Phrase(string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), RepostDateFont);
             ColumnText colTextDate = new ColumnText(writer.DirectContent);
             colTextDate.AddText(phraseDate);
             colTextDate.SetSimpleColumn(20, 550, 700, 50, 1, Element.ALIGN_CENTER);
@@ -290,17 +286,33 @@ namespace SimplyBrand.SocialMonitor.ReportService
 
         private void DrawImage(Document document, byte[] bytes, float x, float y, float width, float height)
         {
-            Image imageHotwords = Image.GetInstance(bytes);
-            imageHotwords.SetAbsolutePosition(x, y);
-            imageHotwords.ScaleAbsolute(width, height);
-            document.Add(imageHotwords);
+            try
+            {
+                Image imageHotwords = Image.GetInstance(bytes);
+                imageHotwords.SetAbsolutePosition(x, y);
+                imageHotwords.ScaleAbsolute(width, height);
+                document.Add(imageHotwords);
+            }
+            catch (Exception ex)
+            {
+
+                LogHelper.WriteLog(ex);
+            }
         }
         private void DrawImage(Document document, string filename, float x, float y, float width, float height)
         {
-            Image imageHotwords = Image.GetInstance(filename);
-            imageHotwords.SetAbsolutePosition(x, y);
-            imageHotwords.ScaleAbsolute(width, height);
-            document.Add(imageHotwords);
+
+            try
+            {
+                Image imageHotwords = Image.GetInstance(filename);
+                imageHotwords.SetAbsolutePosition(x, y);
+                imageHotwords.ScaleAbsolute(width, height);
+                document.Add(imageHotwords);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog(ex);
+            }
         }
 
         private void DrawConfidentialityNotice(Document document, PdfWriter writer)
@@ -446,8 +458,11 @@ namespace SimplyBrand.SocialMonitor.ReportService
             }
             return platforms + " " + keywordfamily.Replace(",", " ") + " " + emotionvalues;
         }
-        public UserReport GeneratePDF(int sysUserId, DateTime reportStarttime, DateTime reportEndTime, EnumReportType type, bool isSysGen, string platforms = null, string keywordFamilyIDs = null, string emotionvalues = null, bool isToday = true, string searchstarttime = null, string searchendtime = null, string keyword = null, string notkeyword = null)
+
+
+        public UserReport GeneratePDF(int sysUserId, DateTime reportStarttime, DateTime reportEndTime, EnumReportType type, bool isSysGen, string platforms, string keywordFamilyIDs, string emotionvalues)
         {
+
             string keywordfamily = string.Empty;//品牌名
             SysUser sysUser = DataRepository.SysUserProvider.GetBySysUserId(sysUserId);
             TList<ContactUser> contactUserTlist = DataRepository.ContactUserProvider.GetBySysUserId(sysUserId);
@@ -464,19 +479,19 @@ namespace SimplyBrand.SocialMonitor.ReportService
                                                   where keywordFamilyIDs.Contains(t.KeywordFamilyId.ToString())
                                                   select t.KeywordFamilyName).ToList());
             }
-
+            DataCenterBLL dateCenterBLL = new DataCenterBLL();
             IDBProvider dbProvider = DBProviderFactory.GetDBProvider(DBType.SqlServer);
-            var emotionalJson = dbProvider.GetEmotionalData(sysUserId, keywordFamilyIDs, platforms, isToday);
-            ResponseDataEmotionalJson responseDataEmotionalJson = JsonHelper.ParseJSON<ResponseDataEmotionalJson>(emotionalJson);
-            List<DataCenterSummaryItemJson> pieData = new List<DataCenterSummaryItemJson>();
-            if (responseDataEmotionalJson != null)
-                pieData = responseDataEmotionalJson.data;//饼图数据
+            //var emotionalJson = dbProvider.GetEmotionalData(sysUserId, keywordFamilyIDs, platforms, isToday);
+            //ResponseDataEmotionalJson responseDataEmotionalJson = JsonHelper.ParseJSON<ResponseDataEmotionalJson>(emotionalJson);
+            List<DataCenterSummaryItemJson> pieData = dateCenterBLL.GetEmotionalData(sysUserId, keywordFamilyIDs, platforms, reportStarttime.ToString("yyyy-MM-dd"), reportEndTime.ToString("yyyy-MM-dd") + " 23:59:59");//饼图数据
+
             //折线图数据
-            var summaryJson = dbProvider.GetSummaryData(sysUserId, keywordFamilyIDs, platforms, emotionvalues, isToday);
-            ResponseDataCenterSummaryJson responseDataCenterSummaryJson = JsonHelper.ParseJSON<ResponseDataCenterSummaryJson>(summaryJson);
-            Dictionary<string, List<DataCenterSummaryItemJson>> dicSummary = new Dictionary<string, List<DataCenterSummaryItemJson>>();
-            if (responseDataCenterSummaryJson != null && responseDataCenterSummaryJson.data != null)
-                dicSummary = responseDataCenterSummaryJson.data.items;
+            //var summaryJson = dbProvider.GetSummaryData(sysUserId, keywordFamilyIDs, platforms, emotionvalues, isToday);
+            //ResponseDataCenterSummaryJson responseDataCenterSummaryJson = JsonHelper.ParseJSON<ResponseDataCenterSummaryJson>(summaryJson);
+            //Dictionary<string, List<DataCenterSummaryItemJson>> dicSummary = new Dictionary<string, List<DataCenterSummaryItemJson>>();
+            //if (responseDataCenterSummaryJson != null && responseDataCenterSummaryJson.data != null)
+            //    dicSummary = responseDataCenterSummaryJson.data.items;
+            Dictionary<string, List<DataCenterSummaryItemJson>> dicSummary = dateCenterBLL.GetSummaryData(sysUserId, keywordFamilyIDs, platforms, emotionvalues, reportStarttime.ToString("yyyy-MM-dd"), reportEndTime.ToString("yyyy-MM-dd") + " 23:59:59");
 
             //获取热门关键词数据
             HotKeywordBLL hotKeywordBLL = new HotKeywordBLL();
@@ -487,7 +502,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
                 hotKeywordJsonList = responseHotKeywordPageJson.data.items;
 
             //string datacenterjson = dbProvider.GetSeach(platforms, keywordFamilyIDs, "", notkeyword, searchstarttime, searchendtime, emotionvalues, 100, 1, sysUserId);
-            string datacenterjson = dbProvider.GetSeach(platforms, keywordFamilyIDs, keyword, notkeyword, searchstarttime, searchendtime, emotionvalues, 100, 1, sysUserId);
+            string datacenterjson = dbProvider.GetSeach(platforms, keywordFamilyIDs, "", "", reportStarttime.ToString("yyyy-MM-dd"), reportEndTime.ToString("yyyy-MM-dd 23:59:59"), emotionvalues, 100, 1, sysUserId);
             ResponseDataCenterJson responseDataCenterJson = JsonHelper.ParseJSON<ResponseDataCenterJson>(datacenterjson);
             List<DataCenterJson> dataCenterJsonList = new List<DataCenterJson>();
             if (responseDataCenterJson.data != null && responseDataCenterJson.data.items != null)
@@ -504,7 +519,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
             string fileName = Guid.NewGuid().ToString() + ".pdf";
             RegisterFont();
             Font font = new Font(baseFont, 14);
-            using (FileStream fs = new FileStream(fileName, FileMode.Create))
+            using (FileStream fs = new FileStream(PDFSavePath + PDFSaveRelativePath + "/" + fileName, FileMode.Create))
             {
                 using (Document document = new Document(PageSize.A4))
                 {
@@ -530,14 +545,14 @@ namespace SimplyBrand.SocialMonitor.ReportService
                         //date
                         if (type == EnumReportType.DayReport)
                         {
-                            DrawText(document, writer, RepostDateFont, string.Format("报告期间：{0}", GetReportDate(type)), 110, 550, 800, 50);
+                            DrawText(document, writer, RepostDateFont, string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), 110, 550, 800, 50);
                         }
                         else
                         {
-                            DrawText(document, writer, RepostDateFont, string.Format("报告期间：{0}", GetReportDate(type)), 20, 550, 800, 50);
+                            DrawText(document, writer, RepostDateFont, string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), 20, 550, 800, 50);
                         }
                         //info
-                        DrawReportInfo(document, writer, sysUserId, DateTime.Now, EnumReportType.WeekDayReport, realName, customerContact);
+                        DrawReportInfo(document, writer, sysUserId, DateTime.Now, type, realName, customerContact);
                         document.NewPage();
                         //directory
                         DrawText(document, writer, TitleFont, "目录", document.PageSize.Width / 2 - 50, document.PageSize.Height - 100, 500, 50);
@@ -552,16 +567,16 @@ namespace SimplyBrand.SocialMonitor.ReportService
                         //一、Background
                         DrawText(document, writer, SmallTitleFont, "一、背景", 20, document.PageSize.Height - 100, 500, 50);
                         //BackgroundInfo
-                        DrawBackgroundInfo(document, writer, GetReportDate(type), keywordfamily, "2,000", "40,000");
+                        DrawBackgroundInfo(document, writer, GetReportDate(type, reportStarttime, reportEndTime), keywordfamily, "2,000", "40,000");
                         //一、Network mentioned quantity 网络提及量
                         DrawText(document, writer, SmallTitleFont, "二、网络提及量", 20, document.PageSize.Height - 200, 500, 50);
-                        DrawImage(document, new DrawChart().DrawLineChart(dicSummary), 50, document.PageSize.Height - 420, 420, 200);
+                        DrawImage(document, drawChart.DrawLineChart(dicSummary), 50, document.PageSize.Height - 420, 420, 200);
                         //三、Sentiment analysis 情感分析
                         DrawText(document, writer, SmallTitleFont, "三、情感分析", 20, document.PageSize.Height - 420, 500, 50);
-                        DrawImage(document, new DrawChart().DrawPie(pieData), 70, document.PageSize.Height - 600, 150, 150);
+                        DrawImage(document, drawChart.DrawPie(pieData), 70, document.PageSize.Height - 600, 150, 150);
                         //四、Hot words 网民讨论热门词
                         DrawText(document, writer, SmallTitleFont, "四、网民讨论热门词", 20, document.PageSize.Height - 620, 500, 50);
-                        DrawImage(document, new DrawChart().DrawWordCloud(hotKeywordJsonList), 70, document.PageSize.Height - 770, 240, 120);
+                        DrawImage(document, drawChart.DrawWordCloud(hotKeywordJsonList), 70, document.PageSize.Height - 770, 240, 120);
                         //data
                         document.NewPage();
                         DrawText(document, writer, TitleFont, "网络舆情相关数据", document.PageSize.Width / 2 - 140, document.PageSize.Height - 75, 500, 50);
@@ -573,7 +588,6 @@ namespace SimplyBrand.SocialMonitor.ReportService
                         DrawCompanyInfo(document, writer);
                         DrawText(document, writer, SmallTitleFont, "欢迎关注我们", 20, document.PageSize.Height - 500, 500, 50);
                         DrawCompanyLogo(document, writer);
-
                         document.Close();
                         writer.Close();
                         fs.Close();
@@ -594,14 +608,14 @@ namespace SimplyBrand.SocialMonitor.ReportService
                 EndTime = reportEndTime,
                 ReportStatus = (int)EnumReportStatus.UnAudited
             };
-            File.Copy(fileName, PDFSavePath + PDFSaveRelativePath + "/" + fileName);
+            //File.Move(fileName, PDFSavePath + PDFSaveRelativePath + "/" + fileName);
             if (DataRepository.UserReportProvider.Insert(userReport))
                 return userReport;
             return null;
 
         }
-
     }
+
     public class itsEvents : PdfPageEventHelper
     {
 
@@ -611,7 +625,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
             PdfPTable headerTbl = new PdfPTable(2);
             headerTbl.TotalWidth = doc.PageSize.Width;
 
-            Font font = new Font(DrawReport.baseFont, 10);
+            Font font = new Font(SimplyReport.baseFont, 10);
 
             PdfPCell cellleft = new PdfPCell(new Phrase("网络舆情监测报告", font));
             cellleft.Border = 0;
@@ -655,7 +669,4 @@ namespace SimplyBrand.SocialMonitor.ReportService
         //    //footerTbl.WriteSelectedRows(0, -1, 0, (doc.BottomMargin + 10), writer.DirectContent);
         //}
     }
-
-
-
 }

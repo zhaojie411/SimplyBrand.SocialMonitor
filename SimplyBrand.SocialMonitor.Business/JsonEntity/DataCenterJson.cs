@@ -15,7 +15,7 @@ namespace SimplyBrand.SocialMonitor.Business.JsonEntity
 
         public string dataKey { get; set; }
 
-        public string datatitle { get; set; }
+        public string datatitle { get; set; }      
 
         public string datatime { get; set; }
 
@@ -53,7 +53,10 @@ namespace SimplyBrand.SocialMonitor.Business.JsonEntity
 
     public class ResponseDataCenterJson : ResponseJson
     {
-        //public int count { get; set; }
+        public int Weibocount { get; set; }
+        public int Forumcount { get; set; }
+        public int Blogcount { get; set; }
+        public int Newscount { get; set; }
         public DataCenterPageJson data { get; set; }
     }
     public class DataCenterSummaryItemJson : BaseJson

@@ -158,15 +158,19 @@ namespace SimplyBrand.SocialMonitor.Business.Utility
         /// <summary>
         /// 日报
         /// </summary>
-        DailyReport = 1,
+        DayReport = 1,
         /// <summary>
         /// 周报
         /// </summary>
-        WeeklyReport = 2,
+        WeekDayReport = 2,
         /// <summary>
         /// 月报
         /// </summary>
-        MonthlyReport = 3
+        MonthReport = 3,
+        /// <summary>
+        /// 用户自定义
+        /// </summary>
+        Custom = 4,
     }
 
 }

@@ -59,13 +59,15 @@
     function changeLanguage() {
 
         var mainmenu = '<li class="nav-header hidden-tablet">' + jQuery.i18n.prop("sb_myprofile") + '</li>' +
-                       '<li><a class="ajax-link" href="setting.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_syssetting") + '</span></a></li>' +
-                      '<li><a class="ajax-link" href="infocenter.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_infocenter") + '</span></a></li>' +
-                      '<li><a class="ajax-link" href="myreport.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_myreport") + '</span></a></li>' +
+                       '<li><a class="ajax-link" href="Setting.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_syssetting") + '</span></a></li>' +
+                      '<li><a class="ajax-link" href="InfoCenter.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_infocenter") + '</span></a></li>' +
+                      '<li><a class="ajax-link" href="MyReport.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_myreport") + '</span></a></li>' +
                       '<li class="nav-header hidden-tablet">' + jQuery.i18n.prop("sb_networkopinion") + '</li>' +
-                      '<li><a class="ajax-link" href="todaydynamic.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_todaydynamic") + '</span></a></li>' +
-                      '<li><a class="ajax-link" href="historydata.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_historydata") + '</span></a></li>' +
-                      '<li><a class="ajax-link" href="datacenter.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_datacenter") + '</span></a></li>';
+                      '<li><a class="ajax-link" href="TodayDynamic.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_todaydynamic") + '</span></a></li>' +
+                      '<li><a class="ajax-link" href="DataCenter.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_todaydetails") + '</span></a></li>' +
+                      '<li><a class="ajax-link" href="HistoryData.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_historydata") + '</span></a></li>' +
+                      '<li><a class="ajax-link" href="GenerateReports.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_generatereports") + '</span></a></li>';
+
         //'<li><a class="ajax-link" href="searchlist.aspx"><span class="hidden-tablet">&nbsp;&nbsp;&nbsp;&nbsp;' + jQuery.i18n.prop("sb_searchrecord") + '</span></a></li>'
         $("#main_menu").empty().append(mainmenu);//菜单
 

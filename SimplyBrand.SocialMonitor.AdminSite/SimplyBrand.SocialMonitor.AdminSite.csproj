@@ -81,6 +81,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DataCenter.aspx" />
     <Content Include="KeywordList.aspx" />
     <Content Include="KeywordListDetail.aspx" />
     <Content Include="Login.aspx" />
@@ -395,11 +396,17 @@
     <Compile Include="Ajax\CreateUserKeyword.ashx.cs">
       <DependentUpon>CreateUserKeyword.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Ajax\DeleteDataInfo.ashx.cs">
+      <DependentUpon>DeleteDataInfo.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Ajax\DeleteKeywordFamily.ashx.cs">
       <DependentUpon>DeleteKeywordFamily.ashx</DependentUpon>
     </Compile>
     <Compile Include="Ajax\DeleteUserKeyWord.ashx.cs">
       <DependentUpon>DeleteUserKeyWord.ashx</DependentUpon>
+    </Compile>
+    <Compile Include="Ajax\GetDataPageListInfo.ashx.cs">
+      <DependentUpon>GetDataPageListInfo.ashx</DependentUpon>
     </Compile>
     <Compile Include="Ajax\GetKeywordList.ashx.cs">
       <DependentUpon>GetKeywordList.ashx</DependentUpon>
@@ -434,6 +441,9 @@
     <Compile Include="Ajax\StopOrEnableSysUser.ashx.cs">
       <DependentUpon>StopOrEnableSysUser.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Ajax\UpdateDataEmotional.ashx.cs">
+      <DependentUpon>UpdateDataEmotional.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Ajax\UpdateKeywordFamily.ashx.cs">
       <DependentUpon>UpdateKeywordFamily.ashx</DependentUpon>
     </Compile>
@@ -448,6 +458,13 @@
     </Compile>
     <Compile Include="BasePage.cs">
       <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DataCenter.aspx.cs">
+      <DependentUpon>DataCenter.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="DataCenter.aspx.designer.cs">
+      <DependentUpon>DataCenter.aspx</DependentUpon>
     </Compile>
     <Compile Include="KeywordList.aspx.cs">
       <DependentUpon>KeywordList.aspx</DependentUpon>
@@ -528,6 +545,9 @@
     <Content Include="Ajax\GetPermission.ashx" />
     <Content Include="Ajax\GetUserReport.ashx" />
     <Content Include="Ajax\UpdateReportStatus.ashx" />
+    <Content Include="Ajax\GetDataPageListInfo.ashx" />
+    <Content Include="Ajax\UpdateDataEmotional.ashx" />
+    <Content Include="Ajax\DeleteDataInfo.ashx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

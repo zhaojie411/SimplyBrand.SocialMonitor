@@ -19,12 +19,11 @@ namespace SimplyBrand.SocialMonitor.ReportService
             //Console.Read();
             DrawReport dr = new DrawReport();
             //dr.DrawChart();
-            dr.GeneratePDF(1, EnumReportType.DayReport, "1,2,3,4", "1,2", "-1,0,1", true);
+            dr.GeneratePDF(34, new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day - 1), DateTime.Now.AddDays(-1), EnumReportType.DayReport, true, "1,2,3,4", "8,9", "-1,0,1", true);
         }
         private static void DoJob(Object threadContext)
         {
             DrawReport drawReport = new DrawReport();
-
             Console.WriteLine("working on over at " + threadContext.ToString());
         }
     }

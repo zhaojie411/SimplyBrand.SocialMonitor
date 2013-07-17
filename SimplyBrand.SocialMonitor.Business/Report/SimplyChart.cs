@@ -14,36 +14,10 @@ using Gma.CodeCloud.Controls.TextAnalyses.Extractors;
 using Gma.CodeCloud.Controls.TextAnalyses.Processing;
 using SimplyBrand.SocialMonitor.Business.JsonEntity;
 
-
-namespace SimplyBrand.SocialMonitor.ReportService
+namespace SimplyBrand.SocialMonitor.Business.Report
 {
-    public class DrawChart
+    public class SimplyChart
     {
-        public byte[] DrawBarChart()
-        {
-            using (Chart chart = new Chart())
-            {
-                ChartArea chartArea = new ChartArea();
-                chartArea.BorderColor = System.Drawing.Color.Yellow;
-                chartArea.BorderDashStyle = ChartDashStyle.Solid;
-                chartArea.BackSecondaryColor = System.Drawing.Color.White;
-                chart.ChartAreas.Add(chartArea);
-                Series series = new Series("Column");
-                series.ChartType = SeriesChartType.Bar;
-                series.Points.AddY(45);
-                series.Points.AddY(34);
-                series.Points.AddY(68);
-                series.Points.AddY(23);
-                series.Points.AddY(15);
-                series.Points.AddY(99);
-                chart.Series.Add(series);
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    chart.SaveImage(ms, ChartImageFormat.Bmp);
-                    return ms.GetBuffer();
-                }
-            }
-        }
         public byte[] DrawWordCloud(List<HotKeywordJson> items)
         {
             using (CloudControl cc = new CloudControl())
@@ -88,10 +62,15 @@ namespace SimplyBrand.SocialMonitor.ReportService
                    .Filter(blacklist)
                         .CountOccurences()
                         .SortByOccurences();
+                if (words == null || words.Count() == 0)
+                {
+                    return null;
+                }
                 cc.WeightedWords = words;
                 using (Bitmap bitmap = new Bitmap(cc.Width, cc.Height))
                 {
                     cc.DrawToBitmap(bitmap, new Rectangle(0, 0, cc.Width, cc.Height));
+                    //bitmap.Save("c:\\" + Guid.NewGuid().ToString() + ".png", ImageFormat.Png);
                     return CommonConvertHelper.BitmapToBytes(bitmap, ImageFormat.Bmp);
                 }
             }
@@ -154,6 +133,7 @@ namespace SimplyBrand.SocialMonitor.ReportService
                     }
                     else if (point.AxisLabel == "负面")
                     {
+                        point["Exploded"] = "true";
                         point.Color = Color.Red;
                     }
                     else if (point.AxisLabel == "中性")
@@ -250,9 +230,8 @@ namespace SimplyBrand.SocialMonitor.ReportService
                 }
             }
         }
-
-
     }
+
     public static class CommonConvertHelper
     {
         public static byte[] ImageToBytes(Image Image, ImageFormat imageFormat)
@@ -315,6 +294,4 @@ namespace SimplyBrand.SocialMonitor.ReportService
             Application.DoEvents();
         }
     }
-
-
 }

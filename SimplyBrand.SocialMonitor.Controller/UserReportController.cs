@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using SimplyBrand.SocialMonitor.Business;
+using SimplyBrand.SocialMonitor.Business.Utility;
 namespace SimplyBrand.SocialMonitor.Controller
 {
     public class UserReportController
@@ -41,6 +42,12 @@ namespace SimplyBrand.SocialMonitor.Controller
         public string GetUserReport(int sysAdminId, int reportType, int pageindex, int pagesize)
         {
             return bll.GetUserReport(sysAdminId, reportType, pageindex, pagesize);
+        }
+
+
+        public string GeneratePDF(int sysUserId, string reportStarttime, string reportEndTime, EnumReportType type, bool isSysGen, string platforms, string keywordFamilyIDs, string emotionvalues)
+        {
+            return bll.GeneratePDF(sysUserId, reportStarttime, reportEndTime, type, isSysGen, platforms, keywordFamilyIDs, emotionvalues);
         }
     }
 }

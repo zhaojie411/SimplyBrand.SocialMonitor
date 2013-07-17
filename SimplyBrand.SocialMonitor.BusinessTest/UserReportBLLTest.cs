@@ -58,7 +58,7 @@ namespace SimplyBrand.SocialMonitor.BusinessTest
                     Link = "",
                     CreateDate = DateTime.Now,
                     Description = "",
-                    ReportType = (int)EnumReportType.WeeklyReport,
+                    ReportType = (int)EnumReportType.WeekDayReport,
                     SysUserId = 34,
                     IsSysGen = true,
                     //StartTime = DateTimeHelper.GetFirstDayOfMonth(2012, i),

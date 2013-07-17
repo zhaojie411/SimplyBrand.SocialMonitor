@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Security;
 using System.Web.SessionState;
+using SimplyBrand.SocialMonitor.Business.Utility;
 
 namespace SimplyBrand.SocialMonitor.Web
 {
@@ -32,6 +33,8 @@ namespace SimplyBrand.SocialMonitor.Web
 
         protected void Application_Error(object sender, EventArgs e)
         {
+            LogHelper.WriteLog("Application_Error", Server.GetLastError());
+            Server.ClearError();
 
         }
 

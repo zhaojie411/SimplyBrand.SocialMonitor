@@ -63,7 +63,7 @@ namespace SimplyBrand.SocialMonitor.BusinessTest
         [TestMethod]
         public void InsertData()
         {
-            string file = "c:\\宜家.txt";
+            string file = "c:\\百安居.txt";
             string[] lines = File.ReadAllLines(file);
             int[] ints = new int[3] { -1, 0, 1 };
             Random random = new Random();
@@ -71,7 +71,7 @@ namespace SimplyBrand.SocialMonitor.BusinessTest
             {
                 try
                 {
-                    string[] currentitems = item.Split('|');
+                    string[] currentitems = item.Split('\t');
                     DataCenter dataCenter = new DataCenter()
                     {
                         Datasourceid = 1,

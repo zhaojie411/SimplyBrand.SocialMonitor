@@ -148,9 +148,9 @@
                         <ul class="nav nav-tabs nav-stacked main-menu">
                             <li class="nav-header hidden-tablet">主页</li>
                             <li><a class="ajax-link" href="/UserManage.aspx"><i class="icon-home"></i><span class="hidden-tablet">用户管理</span></a></li>
+                            <li><a class="ajax-link" href="/DataCenter.aspx"><i class="icon-home"></i><span class="hidden-tablet">数据中心</span></a></li>                            
                             <li><a class="ajax-link" href="/ReportAudit.aspx"><i class="icon-home"></i><span class="hidden-tablet">报表审核</span></a></li>
                         </ul>
-
                     </div>
                 </div>
                 <noscript>

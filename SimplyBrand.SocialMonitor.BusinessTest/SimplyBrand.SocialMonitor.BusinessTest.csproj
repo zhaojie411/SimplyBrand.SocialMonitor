@@ -84,6 +84,7 @@
     <Compile Include="ContactUserBLLTest.cs" />
     <Compile Include="DataCenterBLLTest.cs" />
     <Compile Include="DateTimeHelperTest.cs" />
+    <Compile Include="HotKeywordBLLTest.cs" />
     <Compile Include="KeywordFamilyBLLTest.cs" />
     <Compile Include="PermissionBLLTest.cs" />
     <Compile Include="SysAdminBLLTest.cs" />

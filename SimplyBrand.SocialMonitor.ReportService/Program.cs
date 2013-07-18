@@ -19,10 +19,20 @@ namespace SimplyBrand.SocialMonitor.ReportService
             //};
             //ServiceBase.Run(ServicesToRun);
 
-            ServiceHost serviceHost = new ServiceHost(typeof(SimplyReportService));
-            serviceHost.Open();
-            Console.WriteLine("服务已经启动");
-            Console.Read();
+            ////SimplyBrand.SocialMonitor.Business.Report.SimplyReport report = new Business.Report.SimplyReport();
+
+            //SimplyBrand.SocialMonitor.Controller.WCFClient client = new Controller.WCFClient();
+            SimplyBrand.SocialMonitor.Business.UserReportBLL bll = new Business.UserReportBLL();
+            var json = bll.GeneratePDF(34, "2013-07-15", "2013-07-19", Business.Utility.EnumReportType.Custom, true, "1,2,3,4", "", "");
+
+            //ServiceHost serviceHost = new ServiceHost(typeof(SimplyReportService));
+            //serviceHost.Open();
+            //Console.WriteLine("服务已经启动");
+            //Console.Read();
+
+
+
+
             //ThreadPool.SetMaxThreads(20, 20);
             //for (int i = 0; i < 1000; i++)
             //{

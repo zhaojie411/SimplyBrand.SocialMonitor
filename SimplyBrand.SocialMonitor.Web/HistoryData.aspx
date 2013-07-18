@@ -12,7 +12,7 @@
                 <span class="divider">/</span>
             </li>
             <li>
-                <a href="#" id="sb_todaydynamic">今日动态</a>
+                <a href="#" id="sb_historydata">历史数据</a>
             </li>
         </ul>
     </div>

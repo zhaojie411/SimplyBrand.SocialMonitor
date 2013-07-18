@@ -53,7 +53,7 @@
                             <a id="download_month" style="margin-top: -9px; margin-left: 150px;" class="btn btn-primary"><i class="icon-download-alt"></i><span name="sb_download">下载</span></a>
                         <p>
                     </div>
-                    
+
                 </div>
             </div>
         </div>
@@ -68,13 +68,20 @@
                     beforeSend: function () { },
                     success: function (data) {
                         try {
+                            removebtnloading();
+
                             data = JSON.parse(data);
-                            var url = data.data.filepath + "/" + data.data.filename;
-                            var a = document.createElement('a');
-                            a.href = url;
-                            a.target = '_blank';
-                            document.body.appendChild(a);
-                            a.click();
+                            if (data.issucc && data.data != null) {
+                                var url = data.data.filepath + "/" + data.data.filename;
+                                var a = document.createElement('a');
+                                a.href = url;
+                                a.target = '_blank';
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                            else if (data.data == null) {
+                                notycommon("没有找到您需要的报告");
+                            }
 
                         } catch (e) { }
                     },
@@ -85,18 +92,21 @@
                 if ($("#txtDay").val().length == 0) {
                     return false;
                 }
+                btnloading($(this), "正在请求...");
                 getUserReport(1, $("#txtDay").val());
             });
             $("#download_weekday").click(function (e) {
                 if ($("#txtWeekday").val().length == 0) {
                     return false;
                 }
+                btnloading($(this), "正在请求...");
                 getUserReport(2, $("#txtWeekday").val());
             });
             $("#download_month").click(function (e) {
                 if ($("#txtMonth").val().length == 0) {
                     return false;
                 }
+                btnloading($(this), "正在请求...");
                 getUserReport(3, $("#txtMonth").val());
             });
 

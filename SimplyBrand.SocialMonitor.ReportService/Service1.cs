@@ -16,28 +16,26 @@ namespace SimplyBrand.SocialMonitor.ReportService
         {
             InitializeComponent();
         }
-
-        public ServiceHost serviceHost = null;
+        ServiceHost serviceHost = null;
         protected override void OnStart(string[] args)
         {
-            // TODO: 在此处添加代码以启动服务。
-            serviceHost = new ServiceHost(typeof(SimplyBrand.SocialMonitor.ReportService.SimplyReportService));
+            serviceHost = new ServiceHost(typeof(SimplyReportService));
             serviceHost.Open();
         }
 
         protected override void OnStop()
         {
-            // TODO: 在此处添加代码以执行停止服务所需的关闭操作。
-            if (serviceHost != null)
-                try
-                {
-                    serviceHost.Close();
-                }
-                catch (Exception)
-                {
+            try
+            {
 
-                    serviceHost.Abort();
-                }
+                if (serviceHost != null)
+                    serviceHost.Close();
+            }
+            catch (Exception)
+            {
+
+                serviceHost.Abort();
+            }
         }
     }
 }

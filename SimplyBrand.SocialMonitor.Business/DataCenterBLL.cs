@@ -155,7 +155,7 @@ namespace SimplyBrand.SocialMonitor.Business
         {
             VList<ViewDataCenter> vlist = FindViewDataCenter(sysUserId, keywordFamilyIDs, platforms, starttime, endtime, emotionvalues);
             //按小时排序
-            bool flag = (DateTime.Parse(starttime) - DateTime.Parse(endtime)).Days > 6;
+            bool flag = Math.Abs((DateTime.Parse(starttime) - DateTime.Parse(endtime)).Days) > 6;
 
             var query = from t in vlist
                         group t by new
@@ -189,7 +189,7 @@ namespace SimplyBrand.SocialMonitor.Business
 
             foreach (string item in dic.Keys)
             {
-                dicNew.Add(item, dic[item].OrderBy(p => p.key).ToList());
+                dicNew.Add(item, dic[item].OrderBy(p => DateTime.Parse(p.title)).ToList());
             }
             return dicNew;
         }

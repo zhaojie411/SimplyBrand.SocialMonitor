@@ -49,5 +49,11 @@ namespace SimplyBrand.SocialMonitor.Controller
         {
             return bll.GeneratePDF(sysUserId, reportStarttime, reportEndTime, type, isSysGen, platforms, keywordFamilyIDs, emotionvalues);
         }
+
+
+        public string GetInfoCenter(int sysUserId)
+        {
+            return bll.GetInfoCenter(sysUserId);
+        }
     }
 }

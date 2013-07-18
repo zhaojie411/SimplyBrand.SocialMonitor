@@ -20,7 +20,6 @@
             <div class="box-content">
                 <p id="platList">
                 </p>
-
                 <p id="p_keywordfamily">
                 </p>
                 <p>
@@ -90,9 +89,7 @@
         </div>
     </div>
     <script src="Themes/Default/js/jquery.simple.pager.js"></script>
-    <script src="Themes/Default/js/basedata.js"></script>
-
-
+    <script src="Themes/Default/js/basedata.js"></script>   
     <script type="text/javascript">
         var Getdatatype = 0;
         function check_all(obj, cName) {
@@ -202,7 +199,7 @@
                             html += '<td class="center">' + GetplatType(item.datasourceid) + '</td>';
                             html += '<td class="center">' + item.dataKey + '</td>';
                             html += '<td class="center">' + change_txt(item.emotionalvalue) + '</td>';
-                            html += '<td class="center" title="' + item.datatitle + '">' + substringlength(item.datatitle, 15) + '</td>';
+                            html += '<td class="center"><a href="#"  data-rel="popover" data-content="' + item.datatitle + '" title="' + GetplatType(item.datasourceid) + '">' + substringlength(item.datatitle, 15) + '<a/></td>';
                             html += '<td class="center" title="' + item.dataauthor + '">' + substringlength(item.dataauthor, 6) + '</td>';
                             html += '<td class="center">' + item.dataforward + '</td>';
                             html += '<td class="center">' + item.datacomment + '</td>';
@@ -225,7 +222,8 @@
                         $("#newscount").html(json.Newscount);
                         $("#blogcount").html(json.Blogcount);
                         $("#luntcount").html(json.Forumcount);
-
+                        //popover
+                        $('[rel="popover"],[data-rel="popover"]').popover();
 
                     } catch (e) { }
                 },

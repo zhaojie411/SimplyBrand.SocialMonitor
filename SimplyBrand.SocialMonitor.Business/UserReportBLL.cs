@@ -213,5 +213,107 @@ namespace SimplyBrand.SocialMonitor.Business
             return JsonHelper.ToJson(response);
         }
 
+        /// <summary>
+        /// 获取我的信息 统计信息
+        /// </summary>
+        /// <returns></returns>
+        public string GetInfoCenter(int sysUserId)
+        {
+            ResponseInfoCenterJson response = new ResponseInfoCenterJson();
+            try
+            {
+                response.data = new InfoCenterJson();
+                response.data.monitorsites = GetMonitorsites(sysUserId);
+                response.data.keywordfamily = GetKeyWordfamily(sysUserId);
+                response.data.historyreport = GetHistoryReport(sysUserId);
+                response.data.todaynew = GetTodayNew(sysUserId);
+                response.data.todaynewnegative = GetTodayNewNegative(sysUserId);
+                response.data.total30day = GetTotal30day(sysUserId);
+            }
+            catch (Exception ex)
+            {
+                response.issucc = false;
+                response.errormsg = ConstHelper.INNER_ERROR;
+                LogHelper.WriteLog(ex);
+            }
+            return JsonHelper.ToJson(response);
+        }
+
+        /// <summary>
+        /// 监测站点数
+        /// </summary>
+        /// <param name="sysUserId"></param>
+        /// <returns></returns>
+        private int GetMonitorsites(int sysUserId)
+        {
+            return 0;
+        }
+        /// <summary>
+        /// 近30天累计信息数
+        /// </summary>
+        /// <param name="sysUserId"></param>
+        /// <returns></returns>
+        private int GetTotal30day(int sysUserId)
+        {
+
+            return GetViewDataCenterCount(sysUserId, DateTime.Now.AddDays(-30), DateTime.Now);
+        }
+        /// <summary>
+        /// 今日新增信息数
+        /// </summary>
+        /// <param name="sysUserId"></param>
+        /// <returns></returns>
+        private int GetTodayNew(int sysUserId)
+        {
+            return GetViewDataCenterCount(sysUserId, DateTime.Now, DateTime.Now);
+        }
+        /// <summary>
+        /// 今日新增负面信息
+        /// </summary>
+        /// <param name="sysUserId"></param>
+        /// <returns></returns>
+        private int GetTodayNewNegative(int sysUserId)
+        {
+            return GetViewDataCenterCount(sysUserId, DateTime.Now, DateTime.Now, ((int)EnumEmotionalValue.Negative).ToString());
+        }
+        /// <summary>
+        /// 监测对象数
+        /// </summary>
+        /// <param name="sysUserId"></param>
+        /// <returns></returns>
+        private int GetKeyWordfamily(int sysUserId)
+        {
+            return DataRepository.KeywordFamilyProvider.GetBySysUserId(sysUserId).Count;
+        }
+        /// <summary>
+        /// 历史报告数
+        /// </summary>
+        /// <param name="sysUserId"></param>
+        /// <returns></returns>
+        private int GetHistoryReport(int sysUserId)
+        {
+            UserReportParameterBuilder builder = new UserReportParameterBuilder();
+            builder.Clear();
+            builder.Junction = SqlUtil.AND;
+            builder.Append(UserReportColumn.SysUserId, sysUserId.ToString());
+            builder.Append(UserReportColumn.IsSysGen, true.ToString());
+            return DataRepository.UserReportProvider.Find(builder.GetParameters()).Count;
+        }
+        private int GetViewDataCenterCount(int sysUserId, DateTime start, DateTime end, string emotionalvalue = null)
+        {
+            ViewDataCenterParameterBuilder builder = new ViewDataCenterParameterBuilder();
+            builder.Clear();
+            builder.Junction = SqlUtil.AND;
+            builder.Append(ViewDataCenterColumn.SysUserId, sysUserId.ToString());
+            builder.AppendGreaterThanOrEqual(ViewDataCenterColumn.Datatime, start.ToString("yyyy-MM-dd"));
+            builder.AppendLessThanOrEqual(ViewDataCenterColumn.Datatime, end.ToString("yyyy-MM-dd 23:59:59"));
+            if (!string.IsNullOrEmpty(emotionalvalue))
+            {
+                builder.AppendIn(ViewDataCenterColumn.Emotionalvalue, emotionalvalue.Split(','));
+            }
+            int count = 0;
+            DataRepository.ViewDataCenterProvider.Find(builder.GetParameters(), "", 1, 1, out count);
+            return count;
+        }
     }
 }

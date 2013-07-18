@@ -205,7 +205,6 @@
         };
 
         $("#updateInfo").click(function () {
-            alert($("#txtTel").val());
             checkSubmitMobil();
 
         });

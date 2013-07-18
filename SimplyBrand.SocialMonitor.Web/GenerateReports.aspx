@@ -75,7 +75,6 @@
             };
             var lock = false;
             $("#gen_report").click(function () {
-                
                 if (lock)
                     return false;
                 var platforms = getCheckedValue("platsource");
@@ -103,20 +102,27 @@
                     type: "POST",
                     data: { from: $.trim($("#from").val()), to: $.trim($("#to").val()), platforms: platforms, keywordfamily: keywordfamily, emotionvalues: emotionvalues },
                     beforeSend: function () {
-                        $("#gen_report").after('  <span id="loading"><img style="width:16px;height:11px;" src="/Themes/Default/img/ajax-loaders/ajax-loader-4.gif" title="正在生成报告..."></span>');
+                        //$("#gen_report").after('  <span id="loading"><img style="width:16px;height:11px;" src="/Themes/Default/img/ajax-loaders/ajax-loader-4.gif" title="正在生成报告..."></span>');
+                        btnloading($("#gen_report"), "正在生成报告...");
                         lock = true;
                     },
                     success: function (data) {
                         try {
-                            $("#loading").remove();
+                            //$("#loading").remove();
+                            removebtnloading();
                             lock = false;
                             data = JSON.parse(data);
-                            var url = data.data.filepath + "/" + data.data.filename;
-                            var a = document.createElement('a');
-                            a.href = url;
-                            a.target = '_blank';
-                            document.body.appendChild(a);
-                            a.click();
+                            if (data.issucc && data.data != null) {
+                                var url = data.data.filepath + "/" + data.data.filename;
+                                var a = document.createElement('a');
+                                a.href = url;
+                                a.target = '_blank';
+                                document.body.appendChild(a);
+                                a.click();
+                            }
+                            else {
+                                notycommon("生成报告失败");
+                            }
                         } catch (e) { }
                     },
                     error: function () { }

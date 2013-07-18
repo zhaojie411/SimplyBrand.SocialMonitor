@@ -1,4 +1,20 @@
-﻿$(document).ready(function () {
+﻿function checklogin(data) {
+    try {
+        if (data.errormsg == "请先登录") {
+            location.href = "/Login.html";
+        }
+    } catch (e) { }
+}
+function btnloading(obj, title) {
+    if (title == undefined) {
+        title = "正在加载...";
+    }
+    obj.after('  <span id="loading"><img style="width:16px;height:11px;" src="/Themes/Default/img/ajax-loaders/ajax-loader-4.gif" title="' + title + '"></span>');
+}
+function removebtnloading() {
+    $("#loading").remove();
+}
+$(document).ready(function () {
     //themes, change CSS with JS
     //default theme(CSS) is cerulean, change it if needed
     if ($.cookie('sysuserlogo') != null)
@@ -243,6 +259,7 @@
         'onUploadSuccess': function (file, data, response) {
             try {
                 data = JSON.parse(data);
+                checklogin(data);
                 if (data.issucc) {
                     notycommon("上传图片成功");
                     $.cookie('sysuserlogo', data.data.logo, { expires: 365 });

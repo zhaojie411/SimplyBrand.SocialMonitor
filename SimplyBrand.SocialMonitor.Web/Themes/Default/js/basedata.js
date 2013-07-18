@@ -4,7 +4,10 @@
         weekdays: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'],
         shortMonths: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
     },
-    colors: ['#228B22', '#FF8000', '#E3170D']
+    colors: ['#228B22', '#FF8000', '#E3170D'],
+    exporting: {
+        enabled: false
+    }
 });
 //Highcharts.setOptions({ colors: ['#228B22', '#FF8000', '#E3170D'] });
 function check_all(obj, cName) {
@@ -256,7 +259,7 @@ $(document).ready(function () {
     });
     $("input[type=checkbox]").live("click", function (e) {
         var name = $(this).attr("name");
-        
+
         if (name.indexOf("All") <= 0) {
             if ($("input[name=" + name + "]").length == $("input[name=" + name + "]:checked").length) {
                 $(this).parent().find("input")[0].checked = true;

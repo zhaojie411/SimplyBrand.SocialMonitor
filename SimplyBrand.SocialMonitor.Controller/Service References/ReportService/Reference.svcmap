@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="5b37bd87-d17d-4141-8a4d-f00c2b393983" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="df9a8073-52e3-4881-8afd-2d60119744cd" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
   <ClientOptions>
     <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
     <EnableDataBinding>true</EnableDataBinding>
@@ -21,11 +21,11 @@
     <MetadataSource Address="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/" Protocol="http" SourceId="1" />
   </MetadataSources>
   <Metadata>
-    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="771a6372-61f4-4ad6-80a5-0a00ed84f725" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?xsd=xsd2" />
-    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="14eb0728-395f-4c07-b10f-09c42347df33" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?xsd=xsd1" />
-    <MetadataFile FileName="SimplyReportService.wsdl" MetadataType="Wsdl" ID="de208b57-ccf1-4a0c-b11a-627766229891" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?wsdl" />
-    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="1ddd68a1-095d-4720-b683-c12c3525290a" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?disco" />
-    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="591493b5-b3e3-4f57-91a4-f39872bef1f2" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?xsd=xsd0" />
+    <MetadataFile FileName="item.xsd" MetadataType="Schema" ID="faba2c03-a8b6-4dbf-9a8b-0c8d1e1dface" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?xsd=xsd2" />
+    <MetadataFile FileName="item1.xsd" MetadataType="Schema" ID="a9325f3d-ff7c-4282-ab34-aa7f6d7a9da8" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?xsd=xsd1" />
+    <MetadataFile FileName="SimplyReportService.wsdl" MetadataType="Wsdl" ID="9781fccb-c941-4576-a270-e66b00465129" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?wsdl" />
+    <MetadataFile FileName="item.disco" MetadataType="Disco" ID="68b0b9f4-d798-4ee1-b0e1-a477952e5b95" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?disco" />
+    <MetadataFile FileName="item2.xsd" MetadataType="Schema" ID="bec92d4c-a05b-41ad-bd7d-70f64e2c4000" SourceId="1" SourceUrl="http://localhost:8732/SimplyBrand/SocialMonitor/ReportService/?xsd=xsd0" />
   </Metadata>
   <Extensions>
     <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />

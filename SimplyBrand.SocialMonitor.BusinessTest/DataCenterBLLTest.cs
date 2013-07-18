@@ -63,7 +63,7 @@ namespace SimplyBrand.SocialMonitor.BusinessTest
         [TestMethod]
         public void InsertData()
         {
-            string file = "c:\\百安居.txt";
+            string file = "c:\\摩恩 铅.txt";
             string[] lines = File.ReadAllLines(file);
             int[] ints = new int[3] { -1, 0, 1 };
             Random random = new Random();
@@ -72,22 +72,26 @@ namespace SimplyBrand.SocialMonitor.BusinessTest
                 try
                 {
                     string[] currentitems = item.Split('\t');
-                    DataCenter dataCenter = new DataCenter()
-                    {
-                        Datasourceid = 1,
-                        Uid = currentitems[0],
-                        Dataauthor = currentitems[1],
-                        Weiboid = long.Parse(currentitems[2]),
-                        Datatime = DateTime.Parse(currentitems[3]),
-                        Dataurl = currentitems[4],
-                        Datatitle = currentitems[5],
-                        Datacomment = int.Parse(currentitems[6]),
-                        Dataforward = int.Parse(currentitems[7]),
-                        Emotionalvalue = (short)ints[random.Next(4) - 1]
-                    };
+                    DataCenter dataCenter = new DataCenter();
+                    int comment = 0;
+                    int forward = 0;
+                    int.TryParse(currentitems[6], out comment);
+                    int.TryParse(currentitems[7], out forward);
+                    dataCenter.Datasourceid = 1;
+                    dataCenter.Uid = currentitems[0];
+                    dataCenter.Dataauthor = currentitems[1];
+                    //Weiboid = long.Parse(currentitems[2]),
+                    dataCenter.Weiboid = 0;
+                    dataCenter.Datatime = DateTime.Parse(currentitems[3]);
+                    dataCenter.Dataurl = currentitems[4];
+                    dataCenter.Datatitle = currentitems[5];
+                    dataCenter.Datacomment = comment;
+                    dataCenter.Dataforward = forward;
+                    dataCenter.Emotionalvalue = 0;
+
                     DataRepository.DataCenterProvider.Insert(dataCenter);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
 
 

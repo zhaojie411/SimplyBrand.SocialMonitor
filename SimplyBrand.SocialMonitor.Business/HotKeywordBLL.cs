@@ -19,18 +19,27 @@ namespace SimplyBrand.SocialMonitor.Business
             try
             {
                 TList<KeywordFamily> tlistKeywordFamily = DataRepository.KeywordFamilyProvider.GetBySysUserId(sysUserId);
+                if (tlistKeywordFamily.Count == 0)
+                {
+                    response.issucc = false;
+                    response.errormsg = "该用户没有设置品牌";
+                    return JsonHelper.ToJson(response);
+                }
                 if (string.IsNullOrEmpty(keywordFamilyIDs))
                 {
                     keywordFamilyIDs = string.Join(",", tlistKeywordFamily.Select(p => p.KeywordFamilyId).ToList());
                 }
                 else
                 {
+                    List<string> arrList = keywordFamilyIDs.Split(',').ToList();
                     keywordFamilyIDs = string.Join(",", (from t in tlistKeywordFamily
-                                                         where keywordFamilyIDs.Contains(t.KeywordFamilyId.ToString())
+                                                         where arrList.Contains(t.KeywordFamilyId.ToString())
                                                          select t.KeywordFamilyId).ToList());
 
                 }
-                TList<HotKeyword> tlist = Find(keywordFamilyIDs.Split(','));
+                TList<HotKeyword> tlist = new TList<HotKeyword>();
+                if (!string.IsNullOrEmpty(keywordFamilyIDs))
+                    tlist = Find(keywordFamilyIDs.Split(','));
                 response.issucc = true;
                 response.data = new HotKeywordPageJson();
                 response.data.count = tlist.Count;
@@ -57,6 +66,7 @@ namespace SimplyBrand.SocialMonitor.Business
             HotKeywordParameterBuilder builder = new HotKeywordParameterBuilder();
             builder.Clear();
             builder.Junction = string.Empty;
+
             builder.AppendIn(HotKeywordColumn.KeywordFamilyId, keywordFamilyIDs);
             return DataRepository.HotKeywordProvider.Find(builder.GetParameters());
         }

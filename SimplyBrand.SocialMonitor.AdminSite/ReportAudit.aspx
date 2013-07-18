@@ -135,7 +135,7 @@
                             html += '<td class="center">' + item.starttime + '</td>';
                             html += '<td class="center">' + item.endtime + '</td>';
                             html += '<td class="center">';
-                            html += '<a class="btn btn-info" target="_blank" href="' + (item.filepath + "/" + item.filename) + '"><i class="icon-edit icon-white"></i>下载</a> ';
+                            html += '<a class="btn btn-info" target="_blank" href="http://192.168.1.168' + (item.filepath + "/" + item.filename) + '"><i class="icon-edit icon-white"></i>下载</a> ';
                             html += '<a class="btn" title="通过审核"><i class="icon icon-color icon-check"></i></a> ';
                             html += '<a class="btn" title="未通过审核"><i class="icon icon-color icon-close"></i></a>';
                             html += '</td></tr>';

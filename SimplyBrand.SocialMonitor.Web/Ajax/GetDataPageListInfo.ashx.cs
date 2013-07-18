@@ -24,9 +24,9 @@ namespace SimplyBrand.SocialMonitor.Web.Ajax
 
             string notkeyvalue = context.Request["notkeyvalue"] == null ? "" : context.Request["notkeyvalue"].ToString();
 
-            string starttime = DateTime.Now.ToString("yyyy/MM/dd 00:00:00");
+            string starttime = "";// DateTime.Now.ToString("yyyy/MM/dd 00:00:00");
 
-            string endtime = DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss" );
+            string endtime = "";// DateTime.Now.ToString("yyyy/MM/dd hh:mm:ss");
 
             string emotional = context.Request["emotional"] == null ? "" : context.Request["emotional"].ToString();
 

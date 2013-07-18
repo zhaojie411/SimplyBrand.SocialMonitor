@@ -82,7 +82,6 @@
                 default:
                     return "其它"
                     break;
-
             }
         }
         function change_txt(obj) {
@@ -212,7 +211,7 @@
                             html += '<td class="center">' + item.dataid + '</td>';
                             html += '<td class="center">' +GetplatType(item.datasourceid) + '</td>';                         
                             html += '<td class="center">' + change_txt(item.emotionalvalue) + '</td>';
-                            html += '<td class="center" title="' + item.datatitle + '">' + substringlength(item.datatitle, 15) + '</td>';
+                            html += '<td class="center"><a href="#"  data-rel="popover" data-content="' + item.datatitle + '" title="' + GetplatType(item.datasourceid) + '">' + substringlength(item.datatitle, 15) + '<a/></td>';
                             html += '<td class="center" title="' + item.dataauthor + '">' + substringlength(item.dataauthor, 6) + '</td>';
                             html += '<td class="center">' + item.dataforward + '</td>';
                             html += '<td class="center">' + item.datacomment + '</td>';
@@ -228,7 +227,10 @@
                         $("#weibocount").html(json.Weibocount);
                         $("#newscount").html(json.Newscount);
                         $("#blogcount").html(json.Blogcount);
-                        $("#luntcount").html(json.Forumcount);                      
+                        $("#luntcount").html(json.Forumcount);
+
+                        //popover
+                        $('[rel="popover"],[data-rel="popover"]').popover();
                     } catch (e) { }
                 },
                 error: function () { }

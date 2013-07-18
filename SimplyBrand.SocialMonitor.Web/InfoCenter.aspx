@@ -33,30 +33,30 @@
     <div class="row-fluid sortable">
         <div class="box span12">
             <div class="box-header well" data-original-title>
-                <h2 ><i class="icon-info-sign"></i><span id="sb_myinformation">我的信息</span></h2>
+                <h2><i class="icon-info-sign"></i><span id="sb_myinformation">我的信息</span></h2>
             </div>
             <div class="box-content">
                 <div class="span3">
-                    <span>监测站点数：<span class="red">2192</span> 个</span>
+                    <span>监测站点数：<span class="red" id="monitorsites"></span> 个</span>
                 </div>
                 <div class="span3">
-                    <span>近30天累计信息数：<span class="red">20,312</span> 条</span>
+                    <span>近30天累计信息数：<span class="red" id="total30day">20,312</span> 条</span>
                 </div>
                 <div class="span6">
-                    <span>今日新增信息数：<span class="red">234</span> 条，其中负面信息 <span class="red">21</span> 条【点击查看】</span>
+                    <span>今日新增信息数：<span class="red" id="todaynew">234</span> 条，其中负面信息 <span class="red" id="todaynewnegative">21</span> 条 <a href="/DataCenter.aspx">点击查看</a></span>
                 </div>
 
             </div>
             <br />
             <div class="box-content">
                 <div class="span3">
-                    <span>监测对象数： <span class="red">5</span> 个</span>
+                    <span>监测对象数：<span class="red" id="keywordfamily">5</span> 个</span>
                 </div>
                 <div class="span3">
                     <span></span>
                 </div>
                 <div class="span6">
-                    <span>历史报告数：<span class="red">5</span> 份</span>
+                    <span>历史报告数：<span class="red" id="historyreport">5</span> 份</span>
                 </div>
 
             </div>
@@ -64,4 +64,23 @@
 
 
     </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.get("/Ajax/GetInfoCenter.ashx?r=" + new Date().getTime(), function (data) {
+                try {
+                    data = JSON.parse(data);
+                    if (data != null) {
+
+                        $("#historyreport").html(data.data.historyreport);
+                        $("#keywordfamily").html(data.data.keywordfamily);
+                        $("#monitorsites").html(data.data.monitorsites);
+                        $("#todaynew").html(data.data.todaynew);
+                        $("#todaynewnegative").html(data.data.todaynewnegative);
+                        $("#total30day").html(data.data.total30day);
+                    }
+                } catch (e) { }
+            });
+        });
+
+    </script>
 </asp:Content>

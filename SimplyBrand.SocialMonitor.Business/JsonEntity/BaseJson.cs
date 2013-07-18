@@ -9,7 +9,6 @@ namespace SimplyBrand.SocialMonitor.Business.JsonEntity
     {
 
     }
-
     public class BaseCommonJson : BaseJson
     {
         public int id { get; set; }
@@ -27,4 +26,6 @@ namespace SimplyBrand.SocialMonitor.Business.JsonEntity
         public string errormsg { get; set; }
         public bool issucc { get; set; }
     }
+
+  
 }

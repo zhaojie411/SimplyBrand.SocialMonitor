@@ -417,6 +417,9 @@
     <Compile Include="Ajax\GetHotKeyword.ashx.cs">
       <DependentUpon>GetHotKeyword.ashx</DependentUpon>
     </Compile>
+    <Compile Include="Ajax\GetInfoCenter.ashx.cs">
+      <DependentUpon>GetInfoCenter.ashx</DependentUpon>
+    </Compile>
     <Compile Include="Ajax\GetKeywordFamily.ashx.cs">
       <DependentUpon>GetKeywordFamily.ashx</DependentUpon>
     </Compile>
@@ -562,6 +565,7 @@
     <Content Include="Ajax\GetUserReport.ashx" />
     <Content Include="Ajax\GetHotKeyword.ashx" />
     <Content Include="Ajax\GeneratePDF.ashx" />
+    <Content Include="Ajax\GetInfoCenter.ashx" />
     <None Include="Properties\PublishProfiles\socialmonitor.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>

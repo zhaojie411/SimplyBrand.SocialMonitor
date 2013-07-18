@@ -548,6 +548,7 @@
     <Content Include="Ajax\GetDataPageListInfo.ashx" />
     <Content Include="Ajax\UpdateDataEmotional.ashx" />
     <Content Include="Ajax\DeleteDataInfo.ashx" />
+    <None Include="Properties\PublishProfiles\MBAdmin.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

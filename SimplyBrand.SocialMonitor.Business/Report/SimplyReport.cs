@@ -235,16 +235,6 @@ namespace SimplyBrand.SocialMonitor.Business.Report
             return "";
         }
 
-        public void DrawReportDate(Document document, PdfWriter writer, EnumReportType type, DateTime reportStarttime, DateTime reportEndTime)
-        {
-
-            Phrase phraseDate = new Phrase(string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), RepostDateFont);
-            ColumnText colTextDate = new ColumnText(writer.DirectContent);
-            colTextDate.AddText(phraseDate);
-            colTextDate.SetSimpleColumn(100, 550, 700, 50, 1, Element.ALIGN_CENTER);
-            colTextDate.Go();
-        }
-
         public void DrawReportInfo(Document document, PdfWriter writer, int sysUserId, DateTime dtGen, EnumReportType type, string realName, string customerContact)
         {
 
@@ -445,37 +435,51 @@ namespace SimplyBrand.SocialMonitor.Business.Report
 
         private void DrawCompanyLogo(Document document, PdfWriter writer)
         {
-            PdfPTable table = new PdfPTable(2);
-            string[] images = { "c:\\logo_sina.jpg", "c:\\logo_facebook.jpg", "c:\\logo_3.jpg", "c:\\logo_4.jpg" };
-            foreach (string item in images)
+            try
             {
-                PdfPCell pdfCell = new PdfPCell();
-                Image image = Image.GetInstance(item);
-                image.ScaleAbsolute(55, 42);
-                pdfCell.AddElement(image);
-                pdfCell.AddElement(new Phrase("@SimplyBrand", SmallTitleFont));
-                pdfCell.Border = 0;
-                pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
-                table.AddCell(pdfCell);
+                PdfPTable table = new PdfPTable(2);
+                string[] images = { "c:\\logo_sina.jpg", "c:\\logo_facebook.jpg", "c:\\logo_3.jpg", "c:\\logo_4.jpg" };
+                foreach (string item in images)
+                {
+                    PdfPCell pdfCell = new PdfPCell();
+                    Image image = Image.GetInstance(item);
+                    image.ScaleAbsolute(55, 42);
+                    pdfCell.AddElement(image);
+                    pdfCell.AddElement(new Phrase("@SimplyBrand", SmallTitleFont));
+                    pdfCell.Border = 0;
+                    pdfCell.HorizontalAlignment = Element.ALIGN_CENTER;
+                    table.AddCell(pdfCell);
+                }
+                table.TotalWidth = document.PageSize.Width - 50;
+                table.WriteSelectedRows(0, -1, 20, document.PageSize.Height - 520, writer.DirectContent);
             }
-            table.TotalWidth = document.PageSize.Width - 50;
-            table.WriteSelectedRows(0, -1, 20, document.PageSize.Height - 520, writer.DirectContent);
+            catch (Exception ex)
+            {
+                LogHelper.WriteLog(ex);
+            }
         }
 
         private string GetSearchInfo(string platforms, string keywordfamily, string emotionvalues)
         {
 
-            List<int> listplatforms = platforms.Split(',').ToList().ConvertAll(p => int.Parse(p)).ToList();
-            List<int> listemotionvalues = emotionvalues.Split(',').ToList().ConvertAll(p => int.Parse(p)).ToList();
-            platforms = "";
-            foreach (int item in listplatforms)
+            if (!string.IsNullOrEmpty(platforms))
             {
-                platforms = platforms + GetPlatform(item) + " ";
+                List<int> listplatforms = platforms.Split(',').ToList().ConvertAll(p => int.Parse(p)).ToList();
+                platforms = "";
+                foreach (int item in listplatforms)
+                {
+                    platforms = platforms + GetPlatform(item) + " ";
+                }
             }
-            emotionvalues = "";
-            foreach (int item in listemotionvalues)
+
+            if (!string.IsNullOrEmpty(emotionvalues))
             {
-                emotionvalues = emotionvalues + GetEmotional(item) + " ";
+                List<int> listemotionvalues = emotionvalues.Split(',').ToList().ConvertAll(p => int.Parse(p)).ToList();
+                emotionvalues = "";
+                foreach (int item in listemotionvalues)
+                {
+                    emotionvalues = emotionvalues + GetEmotional(item) + " ";
+                }
             }
             return platforms + " " + keywordfamily.Replace(",", " ") + " " + emotionvalues;
         }
@@ -485,6 +489,7 @@ namespace SimplyBrand.SocialMonitor.Business.Report
         {
 
             string keywordfamily = string.Empty;//品牌名
+            DateTime dtGen = DateTime.Now;//生成报告时间
             SysUser sysUser = DataRepository.SysUserProvider.GetBySysUserId(sysUserId);
             TList<ContactUser> contactUserTlist = DataRepository.ContactUserProvider.GetBySysUserId(sysUserId);
             List<ContactUser> contactUserList = contactUserTlist.Where(p => bool.Parse(p.IsPrimary.ToString())).ToList();
@@ -570,10 +575,10 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                         }
                         else
                         {
-                            DrawText(document, writer, RepostDateFont, string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), 20, 550, 800, 50);
+                            DrawText(document, writer, RepostDateFont, string.Format("报告期间：{0}", GetReportDate(type, reportStarttime, reportEndTime)), 50, 550, 800, 50);
                         }
                         //info
-                        DrawReportInfo(document, writer, sysUserId, DateTime.Now, type, realName, customerContact);
+                        DrawReportInfo(document, writer, sysUserId, dtGen, type, realName, customerContact);
                         document.NewPage();
                         //directory
                         DrawText(document, writer, TitleFont, "目录", document.PageSize.Width / 2 - 50, document.PageSize.Height - 100, 500, 50);
@@ -620,7 +625,7 @@ namespace SimplyBrand.SocialMonitor.Business.Report
             {
                 FileName = fileName,
                 FilePath = PDFSaveRelativePath,
-                CreateDate = DateTime.Now,
+                CreateDate = dtGen,
                 Description = "",
                 ReportType = (int)type,
                 IsSysGen = isSysGen,

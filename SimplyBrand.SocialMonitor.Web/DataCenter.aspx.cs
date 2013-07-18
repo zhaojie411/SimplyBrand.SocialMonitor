@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace SimplyBrand.SocialMonitor.Web
 {
-    public partial class DataCenter : System.Web.UI.Page
+    public partial class DataCenter : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

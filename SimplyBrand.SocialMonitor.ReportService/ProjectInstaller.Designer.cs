@@ -39,7 +39,7 @@
             // 
             // serviceInstaller1
             // 
-            this.serviceInstaller1.Description = "报表服务";
+            this.serviceInstaller1.Description = "生成报表服务";
             this.serviceInstaller1.DisplayName = "SimplyBrand.SocialMonitor.ReportService";
             this.serviceInstaller1.ServiceName = "SimplyBrand.SocialMonitor.ReportService";
             this.serviceInstaller1.StartType = System.ServiceProcess.ServiceStartMode.Automatic;

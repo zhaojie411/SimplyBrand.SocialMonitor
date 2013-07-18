@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 
 namespace SimplyBrand.SocialMonitor.Web
 {
-    public partial class GenerateReports : System.Web.UI.Page
+    public partial class GenerateReports : BasePage
     {
         protected void Page_Load(object sender, EventArgs e)
         {

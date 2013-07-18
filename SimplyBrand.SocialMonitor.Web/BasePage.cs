@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using SimplyBrand.SocialMonitor.Business.Utility;
+using SimplyBrand.SocialMonitor.Controller;
 
 namespace SimplyBrand.SocialMonitor.Web
 {
@@ -9,7 +11,23 @@ namespace SimplyBrand.SocialMonitor.Web
     {
         protected override void OnInit(EventArgs e)
         {
-            if (Request.Cookies["sysuserunique"] == null)
+            try
+            {
+                if (Request.Cookies["sysuserunique"] != null)
+                {
+                    string cookie = EncryHelper.DencryCurrentInfo(HttpContext.Current.Request.Cookies["sysuserunique"].Value);
+                    int sysUserId = int.Parse(cookie.Split('|')[0]);
+                    if (!new SysUserController().CheckLogin(sysUserId))
+                    {
+                        Response.Redirect("/Login.html");
+                    }
+                }
+                else
+                {
+                    Response.Redirect("/Login.html");
+                }
+            }
+            catch (Exception)
             {
 
                 Response.Redirect("/Login.html");

@@ -186,24 +186,32 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                     series.BorderColor = Color.White;
                     series.BorderWidth = 2;
                     series.ChartArea = "Default";
-                    series.ChartType = System.Windows.Forms.DataVisualization.Charting.SeriesChartType.Line;
+                    series.ChartType = SeriesChartType.Line;
                     series.MarkerSize = 4;
-                    series.MarkerStyle = System.Windows.Forms.DataVisualization.Charting.MarkerStyle.None;
+                    series.MarkerStyle = MarkerStyle.None;
                     series.Name = key;
                     series.ShadowColor = System.Drawing.Color.Gray;
-
                     series.ShadowOffset = 1;
-                    series.XValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Double;
-                    series.YValueType = System.Windows.Forms.DataVisualization.Charting.ChartValueType.Double;
+                    series.YValueType = ChartValueType.Double;
+                    series.XValueType = ChartValueType.DateTime;
+                    series.ChartType = SeriesChartType.Spline;
                     chart.Series.Add(series);
-                    chart.Series[key].ChartType = SeriesChartType.Spline;
-                    foreach (var item in dicData[key])
+
+                    var query = from t in dicData[key]
+                                orderby t.key ascending
+                                select t;
+                    foreach (var item in query)
                     {
                         chart.Series[key].Points.AddXY(DateTime.Parse(item.title), item.value);
-                        chart.Series[key].XValueType = ChartValueType.DateTime;
-
                         dtList.Add(DateTime.Parse(item.title));
                     }
+                    //foreach (var item in dicData[key])
+                    //{
+                    //    //chart.Series[key].Points.AddXY(DateTime.Parse(item.title), item.value);
+                    //    chart.Series[key].Points.AddXY(item.key, item.value);
+                    //    dtList.Add(DateTime.Parse(item.title));
+                    //}
+
 
 
                 }
@@ -222,10 +230,10 @@ namespace SimplyBrand.SocialMonitor.Business.Report
                 //chart.ChartAreas["Default"].AxisX.MajorGrid.Interval = 1;
                 chart.ChartAreas["Default"].AxisY.MajorGrid.LineColor = Color.LightGray;
                 chart.ChartAreas["Default"].AxisX.MajorGrid.LineColor = Color.LightGray;
-                if ((dtList[0] - dtList[dtList.Count - 1]).Days <= 6)
+                if (Math.Abs((dtList[0] - dtList[dtList.Count - 1]).Days) < 6)
                 {
-                    chart.ChartAreas["Default"].AxisX.LabelStyle.Format = "MM-dd HH";
-                    chart.ChartAreas["Default"].CursorX.Interval = 1;
+                    chart.ChartAreas["Default"].AxisX.LabelStyle.Format = "MM-dd hh";
+                    chart.ChartAreas["Default"].CursorX.Interval = 2;
                     chart.ChartAreas["Default"].CursorX.IntervalType = DateTimeIntervalType.Hours;
                 }
                 else

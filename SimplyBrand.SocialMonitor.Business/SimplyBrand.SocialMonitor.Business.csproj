@@ -80,6 +80,7 @@
     <Compile Include="JsonEntity\ContactUserJson.cs" />
     <Compile Include="JsonEntity\DataCenterJson.cs" />
     <Compile Include="JsonEntity\HotKeywordJson.cs" />
+    <Compile Include="JsonEntity\InfoCenterJson.cs" />
     <Compile Include="JsonEntity\JsonEntityUtility.cs" />
     <Compile Include="JsonEntity\PermissionJson.cs" />
     <Compile Include="JsonEntity\PlatformJson.cs" />

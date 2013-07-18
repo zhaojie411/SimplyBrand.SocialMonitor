@@ -47,29 +47,34 @@ namespace SimplyBrand.SocialMonitor.BusinessTest
         public void UpdateReportStatusTest()
         {
 
-            DateTime dt = new DateTime(2013, 7, 14);
-            for (int i = 0; i <= 30; i++)
-            {
-                UserReport entity = new UserReport()
-                {
 
-                    FileName = Guid.NewGuid().ToString() + ".pdf",
-                    FilePath = "/reports",
-                    Link = "",
-                    CreateDate = DateTime.Now,
-                    Description = "",
-                    ReportType = (int)EnumReportType.WeekDayReport,
-                    SysUserId = 34,
-                    IsSysGen = true,
-                    //StartTime = DateTimeHelper.GetFirstDayOfMonth(2012, i),
-                    //EndTime = DateTimeHelper.GetLastDayOfMonth(2012, i),
-                    StartTime = dt.AddDays(-i * 7 + 1),
-                    EndTime = dt.AddDays(-i * 7 + 7),
-                    ReportStatus = (int)EnumReportStatus.UnAudited
+            DateTime dt = DateTime.Now;
 
-                };
-                DataRepository.UserReportProvider.Insert(entity);
-            }
+            int i = 0;
+
+            //DateTime dt = new DateTime(2013, 7, 14);
+            //for (int i = 0; i <= 30; i++)
+            //{
+            //    UserReport entity = new UserReport()
+            //    {
+
+            //        FileName = Guid.NewGuid().ToString() + ".pdf",
+            //        FilePath = "/reports",
+            //        Link = "",
+            //        CreateDate = DateTime.Now,
+            //        Description = "",
+            //        ReportType = (int)EnumReportType.WeekDayReport,
+            //        SysUserId = 34,
+            //        IsSysGen = true,
+            //        //StartTime = DateTimeHelper.GetFirstDayOfMonth(2012, i),
+            //        //EndTime = DateTimeHelper.GetLastDayOfMonth(2012, i),
+            //        StartTime = dt.AddDays(-i * 7 + 1),
+            //        EndTime = dt.AddDays(-i * 7 + 7),
+            //        ReportStatus = (int)EnumReportStatus.UnAudited
+
+            //    };
+            //    DataRepository.UserReportProvider.Insert(entity);
+            //}
 
 
 
